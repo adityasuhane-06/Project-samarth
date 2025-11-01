@@ -1,0 +1,94 @@
+{
+  "index_name": "6c05cd1b-ed59-40c2-bc31-e314f39c6971",
+  "title": "Daily District-wise Rainfall Data",
+  "desc": "Daily District-wise Rainfall Data",
+  "org_type": "Central",
+  "org": [
+    "Department of Water Resources, River Development & Ganga Rejuvenation",
+    "Ministry of Jal Shakti",
+    "National Water Informatics Centre"
+  ],
+  "sector": [
+    "Water Resources"
+  ],
+  "source": "data.gov.in",
+  "catalog_uuid": "a6007b2f-eed3-4a68-a321-d2d563d52bb2",
+  "visualizable": "0",
+  "active": "1",
+  "created": "1678377674",
+  "updated": 1761928671,
+  "created_date": "2023-03-09T21:31:14Z",
+  "updated_date": "2025-10-31T16:37:51Z",
+  "external_ws": 0,
+  "external_ws_url": "",
+  "target_bucket": {
+    "index": "water_resources_rainfall_district",
+    "type": "a6007b2f-eed3-4a68-a321-d2d563d52bb2",
+    "field": "6c05cd1b-ed59-40c2-bc31-e314f39c6971"
+  },
+  "field": [
+    {
+      "name": "State",
+      "id": "State",
+      "type": "keyword"
+    },
+    {
+      "name": "District",
+      "id": "District",
+      "type": "keyword"
+    },
+    {
+      "name": "Date",
+      "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||dd/MM/yyyy||yyyy-MM-ddTHH:mm:ssZ",
+      "id": "Date",
+      "type": "date"
+    },
+    {
+      "name": "Year",
+      "id": "Year",
+      "type": "double"
+    },
+    {
+      "name": "Month",
+      "id": "Month",
+      "type": "double"
+    },
+    {
+      "name": "Avg_rainfall",
+      "id": "Avg_rainfall",
+      "type": "double"
+    },
+    {
+      "name": "Agency_name",
+      "id": "Agency_name",
+      "type": "keyword"
+    }
+  ],
+  "field_exposed": [
+    {
+      "name": "Year",
+      "id": "Year",
+      "type": "keyword",
+      "mandatory": true
+    },
+    {
+      "name": "State",
+      "id": "State",
+      "type": "keyword"
+    },
+    {
+      "name": "Agency  Name",
+      "id": "Agency_name",
+      "type": "keyword"
+    }
+  ],
+  "field_dependent": [],
+  "message": "Resource lists",
+  "version": "2.2.0",
+  "status": "ok",
+  "total": 0,
+  "count": 0,
+  "limit": 10,
+  "offset": "0",
+  "records": []
+}

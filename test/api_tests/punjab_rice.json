@@ -1,0 +1,165 @@
+{
+  "index_name": "35be999b-0208-4354-b557-f6ca9a5355de",
+  "title": "District-wise, season-wise crop production statistics from 1997",
+  "desc": "District-wise, season-wise crop production statistics from 1997",
+  "org_type": "Central",
+  "org": [
+    "Ministry of Agriculture and Farmers Welfare",
+    "Department of Agriculture and Farmers Welfare"
+  ],
+  "sector": [
+    "Agriculture",
+    "Agricultural Produces"
+  ],
+  "source": "data.gov.in",
+  "catalog_uuid": "f4435c3b-96be-4002-9839-aa3897dc732b",
+  "visualizable": "1",
+  "active": "1",
+  "created": 1626169739,
+  "updated": 1626171606,
+  "created_date": "2021-07-13T11:48:59Z",
+  "updated_date": "2021-07-13T15:50:06Z",
+  "external_ws": 0,
+  "external_ws_url": "",
+  "target_bucket": {
+    "index": "api",
+    "type": "f4435c3b-96be-4002-9839-aa3897dc732b",
+    "field": "35be999b-0208-4354-b557-f6ca9a5355de"
+  },
+  "field": [
+    {
+      "id": "state_name",
+      "name": "State_Name",
+      "type": "keyword"
+    },
+    {
+      "id": "district_name",
+      "name": "District_Name",
+      "type": "keyword"
+    },
+    {
+      "id": "crop_year",
+      "name": "Crop_Year",
+      "type": "double"
+    },
+    {
+      "id": "season",
+      "name": "Season",
+      "type": "keyword"
+    },
+    {
+      "id": "crop",
+      "name": "Crop",
+      "type": "keyword"
+    },
+    {
+      "id": "area_",
+      "name": "Area",
+      "type": "double"
+    },
+    {
+      "id": "production_",
+      "name": "Production",
+      "type": "double"
+    }
+  ],
+  "message": "Resource lists",
+  "version": "2.2.0",
+  "status": "ok",
+  "total": 338,
+  "count": 10,
+  "limit": 10,
+  "offset": "0",
+  "records": [
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 1997,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 292000,
+      "production_": 879000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 1998,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 305000,
+      "production_": 878000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 1999,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 319000,
+      "production_": 991000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2000,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 319000,
+      "production_": 972000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2001,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 319000,
+      "production_": 958000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2002,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 311000,
+      "production_": 879000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2003,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 326000,
+      "production_": 872000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2004,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 334000,
+      "production_": 1034000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2005,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 345000,
+      "production_": 1003000
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2006,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 178000,
+      "production_": 538000
+    }
+  ]
+}

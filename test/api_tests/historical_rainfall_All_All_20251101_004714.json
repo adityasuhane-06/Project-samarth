@@ -1,0 +1,348 @@
+{
+  "index_name": "440dbca7-86ce-4bf6-b1af-83af2855757e",
+  "title": "Area weighted monthly, seasonal and annual rainfall ( in mm) for 36 meteorological subdivisions from 1901-2015",
+  "desc": "Area weighted monthly, seasonal and annual rainfall ( in mm) for 36 meteorological subdivisions from 1901-2015",
+  "org_type": "Central",
+  "org": [
+    "Ministry of Earth Sciences",
+    "Ministry of Earth Sciences",
+    "India Meteorological Department (IMD)",
+    "India Meteorological Department (IMD)",
+    "India Meteorological Department (IMD), Pune",
+    "India Meteorological Department (IMD), Pune"
+  ],
+  "sector": [
+    "Earth Sciences",
+    "Atmospheric Science",
+    "Earth Sciences",
+    "Atmospheric Science",
+    "Earth Sciences",
+    "Atmospheric Science"
+  ],
+  "source": "data.gov.in",
+  "catalog_uuid": "fb5e2a33-3e34-4087-83a1-f0e46f2748d0",
+  "visualizable": "1",
+  "active": "1",
+  "field": [
+    {
+      "id": "subdivision",
+      "name": "SUBDIVISION",
+      "type": "keyword"
+    },
+    {
+      "id": "year",
+      "name": "YEAR",
+      "type": "double"
+    },
+    {
+      "id": "jan",
+      "name": "JAN",
+      "type": "double"
+    },
+    {
+      "id": "feb",
+      "name": "FEB",
+      "type": "double"
+    },
+    {
+      "id": "mar",
+      "name": "MAR",
+      "type": "double"
+    },
+    {
+      "id": "apr",
+      "name": "APR",
+      "type": "double"
+    },
+    {
+      "id": "may",
+      "name": "MAY",
+      "type": "double"
+    },
+    {
+      "id": "jun",
+      "name": "JUN",
+      "type": "double"
+    },
+    {
+      "id": "jul",
+      "name": "JUL",
+      "type": "double"
+    },
+    {
+      "id": "aug",
+      "name": "AUG",
+      "type": "double"
+    },
+    {
+      "id": "sep",
+      "name": "SEP",
+      "type": "double"
+    },
+    {
+      "id": "oct",
+      "name": "OCT",
+      "type": "double"
+    },
+    {
+      "id": "nov",
+      "name": "NOV",
+      "type": "double"
+    },
+    {
+      "id": "dec",
+      "name": "DEC",
+      "type": "double"
+    },
+    {
+      "id": "annual",
+      "name": "ANNUAL",
+      "type": "double"
+    },
+    {
+      "id": "jan_feb",
+      "name": "Jan-Feb",
+      "type": "double"
+    },
+    {
+      "id": "mar_may",
+      "name": "Mar-May",
+      "type": "double"
+    },
+    {
+      "id": "jun_sep",
+      "name": "Jun-Sep",
+      "type": "double"
+    },
+    {
+      "id": "oct_dec",
+      "name": "Oct-Dec",
+      "type": "double"
+    }
+  ],
+  "updated": 1535437560,
+  "updated_date": "2018-08-28T11:56:00Z",
+  "external_ws_url": "",
+  "external_ws": "0",
+  "created": "1535437560",
+  "created_date": "2018-08-28T11:56:00Z",
+  "message": "Resource lists",
+  "version": "2.2.0",
+  "status": "ok",
+  "total": 4116,
+  "count": 10,
+  "limit": 10,
+  "offset": "0",
+  "records": [
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1901",
+      "jan": "49.2",
+      "feb": "87.1",
+      "mar": "29.2",
+      "apr": "2.3",
+      "may": "528.8",
+      "jun": "517.5",
+      "jul": "365.1",
+      "aug": "481.1",
+      "sep": "332.6",
+      "oct": "388.5",
+      "nov": "558.2",
+      "dec": "33.6",
+      "annual": "3373.2",
+      "jan_feb": "136.3",
+      "mar_may": "560.3",
+      "jun_sep": "1696.3",
+      "oct_dec": "980.3"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1902",
+      "jan": "0.00",
+      "feb": "159.8",
+      "mar": "12.2",
+      "apr": "0.00",
+      "may": "446.1",
+      "jun": "537.1",
+      "jul": "228.9",
+      "aug": "753.7",
+      "sep": "666.2",
+      "oct": "197.2",
+      "nov": "359",
+      "dec": "160.5",
+      "annual": "3520.7",
+      "jan_feb": "159.8",
+      "mar_may": "458.3",
+      "jun_sep": "2185.9",
+      "oct_dec": "716.7"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1903",
+      "jan": "12.7",
+      "feb": "144",
+      "mar": "0.00",
+      "apr": "1",
+      "may": "235.1",
+      "jun": "479.9",
+      "jul": "728.4",
+      "aug": "326.7",
+      "sep": "339",
+      "oct": "181.2",
+      "nov": "284.4",
+      "dec": "225",
+      "annual": "2957.4",
+      "jan_feb": "156.7",
+      "mar_may": "236.1",
+      "jun_sep": "1874",
+      "oct_dec": "690.6"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1904",
+      "jan": "9.4",
+      "feb": "14.7",
+      "mar": "0.00",
+      "apr": "202.4",
+      "may": "304.5",
+      "jun": "495.1",
+      "jul": "502",
+      "aug": "160.1",
+      "sep": "820.4",
+      "oct": "222.2",
+      "nov": "308.7",
+      "dec": "40.1",
+      "annual": "3079.6",
+      "jan_feb": "24.1",
+      "mar_may": "506.9",
+      "jun_sep": "1977.6",
+      "oct_dec": "571"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1905",
+      "jan": "1.3",
+      "feb": "0.00",
+      "mar": "3.3",
+      "apr": "26.9",
+      "may": "279.5",
+      "jun": "628.7",
+      "jul": "368.7",
+      "aug": "330.5",
+      "sep": "297",
+      "oct": "260.7",
+      "nov": "25.4",
+      "dec": "344.7",
+      "annual": "2566.7",
+      "jan_feb": "1.3",
+      "mar_may": "309.7",
+      "jun_sep": "1624.9",
+      "oct_dec": "630.8"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1906",
+      "jan": "36.6",
+      "feb": "0.00",
+      "mar": "0.00",
+      "apr": "0.00",
+      "may": "556.1",
+      "jun": "733.3",
+      "jul": "247.7",
+      "aug": "320.5",
+      "sep": "164.3",
+      "oct": "267.8",
+      "nov": "128.9",
+      "dec": "79.2",
+      "annual": "2534.4",
+      "jan_feb": "36.6",
+      "mar_may": "556.1",
+      "jun_sep": "1465.8",
+      "oct_dec": "475.9"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1907",
+      "jan": "110.7",
+      "feb": "0.00",
+      "mar": "113.3",
+      "apr": "21.6",
+      "may": "616.3",
+      "jun": "305.2",
+      "jul": "443.9",
+      "aug": "377.6",
+      "sep": "200.4",
+      "oct": "264.4",
+      "nov": "648.9",
+      "dec": "245.6",
+      "annual": "3347.9",
+      "jan_feb": "110.7",
+      "mar_may": "751.2",
+      "jun_sep": "1327.1",
+      "oct_dec": "1158.9"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1908",
+      "jan": "20.9",
+      "feb": "85.1",
+      "mar": "0.00",
+      "apr": "29",
+      "may": "562",
+      "jun": "693.6",
+      "jul": "481.4",
+      "aug": "699.9",
+      "sep": "428.8",
+      "oct": "170.7",
+      "nov": "208.1",
+      "dec": "196.9",
+      "annual": "3576.4",
+      "jan_feb": "106",
+      "mar_may": "591",
+      "jun_sep": "2303.7",
+      "oct_dec": "575.7"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1910",
+      "jan": "26.6",
+      "feb": "22.7",
+      "mar": "206.3",
+      "apr": "89.3",
+      "may": "224.5",
+      "jun": "472.7",
+      "jul": "264.3",
+      "aug": "337.4",
+      "sep": "626.6",
+      "oct": "208.2",
+      "nov": "267.3",
+      "dec": "153.5",
+      "annual": "2899.4",
+      "jan_feb": "49.3",
+      "mar_may": "520.1",
+      "jun_sep": "1701",
+      "oct_dec": "629"
+    },
+    {
+      "subdivision": "ANDAMAN & NICOBAR ISLANDS",
+      "year": "1911",
+      "jan": "0.00",
+      "feb": "8.4",
+      "mar": "0.00",
+      "apr": "122.5",
+      "may": "327.3",
+      "jun": "649",
+      "jul": "253",
+      "aug": "187.1",
+      "sep": "464.5",
+      "oct": "333.8",
+      "nov": "94.5",
+      "dec": "247.1",
+      "annual": "2687.2",
+      "jan_feb": "8.4",
+      "mar_may": "449.8",
+      "jun_sep": "1553.6",
+      "oct_dec": "675.4"
+    }
+  ]
+}

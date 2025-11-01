@@ -1,0 +1,331 @@
+{
+  "summary": {
+    "total_records": 30,
+    "years": [
+      "2012",
+      "2013",
+      "2014",
+      "2015"
+    ],
+    "districts": [
+      "AMRITSAR"
+    ],
+    "crops": [
+      "Arhar/Tur",
+      "Gram",
+      "Guar seed",
+      "Maize",
+      "Masoor",
+      "Moong(Green Gram)",
+      "Peas & beans (Pulses)",
+      "Rapeseed &Mustard",
+      "Rice",
+      "Sesamum",
+      "Sugarcane",
+      "Urad",
+      "Wheat"
+    ]
+  },
+  "records": [
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Kharif",
+      "crop": "Arhar/Tur",
+      "area_": 2000,
+      "production_": 1800,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Kharif",
+      "crop": "Maize",
+      "area_": 1000,
+      "production_": 4000,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Kharif",
+      "crop": "Moong(Green Gram)",
+      "area_": 3000,
+      "production_": 3000,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 182000,
+      "production_": 505000,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Kharif",
+      "crop": "Sesamum",
+      "area_": 17000,
+      "production_": 3000,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Kharif",
+      "crop": "Urad",
+      "area_": 2000,
+      "production_": 1100,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Rabi",
+      "crop": "Peas & beans (Pulses)",
+      "area_": 4000,
+      "production_": 4300,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Rabi",
+      "crop": "Rapeseed &Mustard",
+      "area_": 1000,
+      "production_": 1000,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Rabi",
+      "crop": "Wheat",
+      "area_": 188000,
+      "production_": 736000,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2014,
+      "season": "Whole Year",
+      "crop": "Sugarcane",
+      "area_": 4000,
+      "production_": 301000,
+      "fetch_year": "2014"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Kharif",
+      "crop": "Arhar/Tur",
+      "area_": 2000,
+      "production_": 2000,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Kharif",
+      "crop": "Maize",
+      "area_": 1000,
+      "production_": 4000,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Kharif",
+      "crop": "Moong(Green Gram)",
+      "area_": 1000,
+      "production_": 1000,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 182000,
+      "production_": 518000,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Kharif",
+      "crop": "Sesamum",
+      "area_": 13000,
+      "production_": 3000,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Kharif",
+      "crop": "Urad",
+      "area_": 3000,
+      "production_": 1400,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Rabi",
+      "crop": "Gram",
+      "area_": 1000,
+      "production_": 1200,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Rabi",
+      "crop": "Rapeseed &Mustard",
+      "area_": 1000,
+      "production_": 1400,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Rabi",
+      "crop": "Wheat",
+      "area_": 188000,
+      "production_": 934000,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2013,
+      "season": "Whole Year",
+      "crop": "Sugarcane",
+      "area_": 5000,
+      "production_": 401000,
+      "fetch_year": "2013"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Kharif",
+      "crop": "Arhar/Tur",
+      "area_": 100,
+      "production_": 100,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Kharif",
+      "crop": "Rice",
+      "area_": 185000,
+      "production_": 544000,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Kharif",
+      "crop": "Sesamum",
+      "area_": 1200,
+      "production_": 400,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Kharif",
+      "crop": "Urad",
+      "area_": 400,
+      "production_": 200,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Rabi",
+      "crop": "Gram",
+      "area_": 100,
+      "production_": 100,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Rabi",
+      "crop": "Masoor",
+      "area_": 100,
+      "production_": 100,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Rabi",
+      "crop": "Rapeseed &Mustard",
+      "area_": 1000,
+      "production_": 1400,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Rabi",
+      "crop": "Wheat",
+      "area_": 190000,
+      "production_": 884000,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Whole Year",
+      "crop": "Guar seed",
+      "area_": 300,
+      "production_": 300,
+      "fetch_year": "2012"
+    },
+    {
+      "state_name": "Punjab",
+      "district_name": "AMRITSAR",
+      "crop_year": 2012,
+      "season": "Whole Year",
+      "crop": "Sugarcane",
+      "area_": 2000,
+      "production_": 141000,
+      "fetch_year": "2012"
+    }
+  ]
+}

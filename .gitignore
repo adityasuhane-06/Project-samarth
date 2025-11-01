@@ -1,0 +1,113 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.virtualenv/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Data Files (exclude large CSV files)
+*.csv
+!test/api_tests/*.csv
+data/
+datasets/
+
+# Cache
+.cache/
+*.cache
+
+# OS
+Thumbs.db
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+# Project Specific
+activate_env.bat
+deployment/*.pyc
+src/__pycache__/
+test/__pycache__/
+
+# API Keys and Secrets (double-check)
+*secret*
+*SECRET*
+*key*
+*KEY*
+!requirements.txt
+!README.md
+
+# Temporary Files
+temp/
+tmp/
+*.tmp
+*.bak
+*.swp
+
+# MongoDB
+mongodb_data/
+
+# Documentation Build
+docs/_build/
+site/
+
+# Distribution
+*.tar.gz
+*.zip

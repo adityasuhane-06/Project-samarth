@@ -1,0 +1,33 @@
+State,Production,Percent_Share,map_state_code,Financial_Year,Category,Product_Code
+Andhra Pradesh,16757.19,15.56,IN-AP,2023-24,Fruits,All
+Maharashtra,15280.29,14.19,IN-MH,2023-24,Fruits,All
+Uttar Pradesh,12052.19,11.19,IN-UP,2023-24,Fruits,All
+Madhya Pradesh,9196.81,8.54,IN-MP,2023-24,Fruits,All
+Gujarat,8383.32,7.79,IN-GJ,2023-24,Fruits,All
+Tamil Nadu,7000.29,6.5,IN-TN,2023-24,Fruits,All
+Karnataka,6938.21,6.44,IN-KA,2023-24,Fruits,All
+Bihar,4521.03,4.2,IN-BR,2023-24,Fruits,All
+West Bengal,3877.54,3.6,IN-WB,2023-24,Fruits,All
+Kerala,3175.17,2.95,IN-KL,2023-24,Fruits,All
+Jammu And Kashmir,2642.57,2.45,IN-JK,2023-24,Fruits,All
+Orissa,2635.95,2.45,IN-OR,2023-24,Fruits,All
+Chhattisgarh,2359.45,2.19,IN-CT,2023-24,Fruits,All
+Assam,2341.67,2.18,IN-AS,2023-24,Fruits,All
+Punjab,2305.87,2.14,IN-PB,2023-24,Fruits,All
+Telangana,1811.34,1.68,IN-TG,2023-24,Fruits,All
+Jharkhand,1164.09,1.08,IN-JH,2023-24,Fruits,All
+Rajasthan,1081.76,1.0,IN-RJ,2023-24,Fruits,All
+Haryana,740.6,0.69,IN-HR,2023-24,Fruits,All
+Himachal Pradesh,637.22,0.59,IN-HP,2023-24,Fruits,All
+Tripura,596.87,0.55,IN-TR,2023-24,Fruits,All
+Manipur,479.63,0.45,IN-MN,2023-24,Fruits,All
+Meghalaya,401.83,0.37,IN-ML,2023-24,Fruits,All
+Mizoram,344.12,0.32,IN-MZ,2023-24,Fruits,All
+Nagaland,343.5,0.32,IN-NL,2023-24,Fruits,All
+Uttarakhand,342.06,0.32,IN-UT,2023-24,Fruits,All
+Arunachal Pradesh,110.43,0.1,IN-AR,2023-24,Fruits,All
+Sikkim,50.81,0.05,IN-SK,2023-24,Fruits,All
+Goa,45.99,0.04,IN-GA,2023-24,Fruits,All
+Andaman And Nicobar,26.02,0.02,IN-AN,2023-24,Fruits,All
+Pondicherry,10.07,0.01,IN-PY,2023-24,Fruits,All
+Ladakh,8.49,0.01,IN-LK,2023-24,Fruits,All

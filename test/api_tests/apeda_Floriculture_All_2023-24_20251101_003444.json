@@ -1,0 +1,261 @@
+[
+  {
+    "state": "Tamil Nadu",
+    "cutvalue": 43.24,
+    "losevalue": 579.68,
+    "production": 622.92,
+    "map_state_code": "IN-TN"
+  },
+  {
+    "state": "Madhya Pradesh",
+    "cutvalue": 0.0,
+    "losevalue": 414.87,
+    "production": 414.87,
+    "map_state_code": "IN-MP"
+  },
+  {
+    "state": "Karnataka",
+    "cutvalue": 1.12,
+    "losevalue": 404.0,
+    "production": 405.12,
+    "map_state_code": "IN-KA"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "cutvalue": 95.73,
+    "losevalue": 270.65,
+    "production": 366.38,
+    "map_state_code": "IN-AP"
+  },
+  {
+    "state": "West Bengal",
+    "cutvalue": 275.45,
+    "losevalue": 73.37,
+    "production": 348.82,
+    "map_state_code": "IN-WB"
+  },
+  {
+    "state": "Chhattisgarh",
+    "cutvalue": 106.18,
+    "losevalue": 54.19,
+    "production": 160.37,
+    "map_state_code": "IN-CT"
+  },
+  {
+    "state": "Gujarat",
+    "cutvalue": 0.0,
+    "losevalue": 135.95,
+    "production": 135.95,
+    "map_state_code": "IN-GJ"
+  },
+  {
+    "state": "Uttar Pradesh",
+    "cutvalue": 74.42,
+    "losevalue": 54.36,
+    "production": 128.78,
+    "map_state_code": "IN-UP"
+  },
+  {
+    "state": "Orissa",
+    "cutvalue": 35.98,
+    "losevalue": 57.0,
+    "production": 92.98,
+    "map_state_code": "IN-OR"
+  },
+  {
+    "state": "Telangana",
+    "cutvalue": 3.2,
+    "losevalue": 54.82,
+    "production": 58.03,
+    "map_state_code": "IN-TG"
+  },
+  {
+    "state": "Haryana",
+    "cutvalue": 6.39,
+    "losevalue": 19.36,
+    "production": 25.75,
+    "map_state_code": "IN-HR"
+  },
+  {
+    "state": "Nagaland",
+    "cutvalue": 22.96,
+    "losevalue": 0.0,
+    "production": 22.96,
+    "map_state_code": "IN-NL"
+  },
+  {
+    "state": "Jharkhand",
+    "cutvalue": 18.2,
+    "losevalue": 4.52,
+    "production": 22.72,
+    "map_state_code": "IN-JH"
+  },
+  {
+    "state": "Sikkim",
+    "cutvalue": 0.08,
+    "losevalue": 16.5,
+    "production": 16.58,
+    "map_state_code": "IN-SK"
+  },
+  {
+    "state": "Bihar",
+    "cutvalue": 1.5,
+    "losevalue": 12.82,
+    "production": 14.32,
+    "map_state_code": "IN-BR"
+  },
+  {
+    "state": "Himachal Pradesh",
+    "cutvalue": 6.1,
+    "losevalue": 2.33,
+    "production": 8.42,
+    "map_state_code": "IN-HP"
+  },
+  {
+    "state": "Uttarakhand",
+    "cutvalue": 3.6,
+    "losevalue": 1.38,
+    "production": 4.98,
+    "map_state_code": "IN-UT"
+  },
+  {
+    "state": "Tripura",
+    "cutvalue": 0.0,
+    "losevalue": 3.86,
+    "production": 3.86,
+    "map_state_code": "IN-TR"
+  },
+  {
+    "state": "Mizoram",
+    "cutvalue": 0.79,
+    "losevalue": 0.0,
+    "production": 0.79,
+    "map_state_code": "IN-MZ"
+  },
+  {
+    "state": "Jammu And Kashmir",
+    "cutvalue": 0.39,
+    "losevalue": 0.06,
+    "production": 0.45,
+    "map_state_code": "IN-JK"
+  },
+  {
+    "state": "Kerala",
+    "cutvalue": 0.08,
+    "losevalue": 0.35,
+    "production": 0.43,
+    "map_state_code": "IN-KL"
+  },
+  {
+    "state": "Meghalaya",
+    "cutvalue": 0.33,
+    "losevalue": 0.0,
+    "production": 0.33,
+    "map_state_code": "IN-ML"
+  },
+  {
+    "state": "Pondicherry",
+    "cutvalue": 0.0,
+    "losevalue": 0.19,
+    "production": 0.19,
+    "map_state_code": "IN-PY"
+  },
+  {
+    "state": "Manipur",
+    "cutvalue": 0.09,
+    "losevalue": 0.03,
+    "production": 0.12,
+    "map_state_code": "IN-MN"
+  },
+  {
+    "state": "Andaman And Nicobar",
+    "cutvalue": 0.0,
+    "losevalue": 0.04,
+    "production": 0.04,
+    "map_state_code": "IN-AN"
+  },
+  {
+    "state": "Chandigarh",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-CH"
+  },
+  {
+    "state": "Arunachal Pradesh",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-AR"
+  },
+  {
+    "state": "Goa",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-GA"
+  },
+  {
+    "state": "Lakshadweep",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-LD"
+  },
+  {
+    "state": "Delhi",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-DL"
+  },
+  {
+    "state": "Ladakh",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-LK"
+  },
+  {
+    "state": "Assam",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-AS"
+  },
+  {
+    "state": "Dadra And Nagar Haveli",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-DN"
+  },
+  {
+    "state": "Punjab",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-PB"
+  },
+  {
+    "state": "Rajasthan",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-RJ"
+  },
+  {
+    "state": "Maharashtra",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-MH"
+  },
+  {
+    "state": "Daman And Diu",
+    "cutvalue": 0.0,
+    "losevalue": 0.0,
+    "production": 0.0,
+    "map_state_code": "IN-DD"
+  }
+]

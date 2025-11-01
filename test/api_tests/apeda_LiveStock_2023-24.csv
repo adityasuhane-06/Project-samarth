@@ -1,0 +1,37 @@
+State,Production,Percent_Share,map_state_code,Financial_Year,Category,Product_Code
+Andhra Pradesh,271006.81,16.06,IN-AP,2023-24,LiveStock,All
+Tamil Nadu,235671.14,13.96,IN-TN,2023-24,LiveStock,All
+Telangana,191916.22,11.37,IN-TG,2023-24,LiveStock,All
+West Bengal,172655.46,10.23,IN-WB,2023-24,LiveStock,All
+Karnataka,108964.59,6.46,IN-KA,2023-24,LiveStock,All
+Uttar Pradesh,100530.82,5.96,IN-UP,2023-24,LiveStock,All
+Haryana,99202.93,5.88,IN-HR,2023-24,LiveStock,All
+Maharashtra,96299.73,5.71,IN-MH,2023-24,LiveStock,All
+Rajasthan,66115.61,3.92,IN-RJ,2023-24,LiveStock,All
+Punjab,61608.84,3.65,IN-PB,2023-24,LiveStock,All
+Madhya Pradesh,56552.21,3.35,IN-MP,2023-24,LiveStock,All
+Bihar,48080.12,2.85,IN-BR,2023-24,LiveStock,All
+Orissa,40351.79,2.39,IN-OR,2023-24,LiveStock,All
+Gujarat,37317.22,2.21,IN-GJ,2023-24,LiveStock,All
+Kerala,27670.85,1.64,IN-KL,2023-24,LiveStock,All
+Chhattisgarh,26122.63,1.55,IN-CT,2023-24,LiveStock,All
+Jharkhand,13688.99,0.81,IN-JH,2023-24,LiveStock,All
+Uttarakhand,7891.07,0.47,IN-UT,2023-24,LiveStock,All
+Assam,7459.92,0.44,IN-AS,2023-24,LiveStock,All
+Jammu And Kashmir,4892.47,0.29,IN-JK,2023-24,LiveStock,All
+Tripura,3962.74,0.23,IN-TR,2023-24,LiveStock,All
+Himachal Pradesh,2624.18,0.16,IN-HP,2023-24,LiveStock,All
+Manipur,1753.4,0.1,IN-MN,2023-24,LiveStock,All
+Meghalaya,1379.97,0.08,IN-ML,2023-24,LiveStock,All
+Andaman And Nicobar,779.97,0.05,IN-AN,2023-24,LiveStock,All
+Nagaland,545.43,0.03,IN-NL,2023-24,LiveStock,All
+Arunachal Pradesh,518.89,0.03,IN-AR,2023-24,LiveStock,All
+Goa,508.62,0.03,IN-GA,2023-24,LiveStock,All
+Delhi,487.74,0.03,IN-DL,2023-24,LiveStock,All
+Mizoram,458.52,0.03,IN-MZ,2023-24,LiveStock,All
+Sikkim,217.48,0.01,IN-SK,2023-24,LiveStock,All
+Pondicherry,193.46,0.01,IN-PY,2023-24,LiveStock,All
+Chandigarh,83.83,0.0,IN-CH,2023-24,LiveStock,All
+Lakshadweep,74.25,0.0,IN-LD,2023-24,LiveStock,All
+Ladakh,67.77,0.0,IN-LK,2023-24,LiveStock,All
+Dadra And Nagar Haveli,10.98,0.0,IN-DN,2023-24,LiveStock,All

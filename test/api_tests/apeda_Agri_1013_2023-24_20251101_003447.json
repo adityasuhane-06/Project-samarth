@@ -1,0 +1,140 @@
+[
+  {
+    "state": "Uttar Pradesh",
+    "production": 35340.0,
+    "percentshare": 31.19,
+    "map_state_code": "IN-UP"
+  },
+  {
+    "state": "Madhya Pradesh",
+    "production": 22581.0,
+    "percentshare": 19.93,
+    "map_state_code": "IN-MP"
+  },
+  {
+    "state": "Punjab",
+    "production": 17737.0,
+    "percentshare": 15.66,
+    "map_state_code": "IN-PB"
+  },
+  {
+    "state": "Haryana",
+    "production": 11191.0,
+    "percentshare": 9.88,
+    "map_state_code": "IN-HR"
+  },
+  {
+    "state": "Rajasthan",
+    "production": 9700.0,
+    "percentshare": 8.56,
+    "map_state_code": "IN-RJ"
+  },
+  {
+    "state": "Bihar",
+    "production": 7168.0,
+    "percentshare": 6.33,
+    "map_state_code": "IN-BR"
+  },
+  {
+    "state": "Gujarat",
+    "production": 3773.0,
+    "percentshare": 3.33,
+    "map_state_code": "IN-GJ"
+  },
+  {
+    "state": "Maharashtra",
+    "production": 1988.0,
+    "percentshare": 1.75,
+    "map_state_code": "IN-MH"
+  },
+  {
+    "state": "Uttarakhand",
+    "production": 869.0,
+    "percentshare": 0.77,
+    "map_state_code": "IN-UT"
+  },
+  {
+    "state": "Himachal Pradesh",
+    "production": 786.0,
+    "percentshare": 0.69,
+    "map_state_code": "IN-HP"
+  },
+  {
+    "state": "West Bengal",
+    "production": 593.0,
+    "percentshare": 0.52,
+    "map_state_code": "IN-WB"
+  },
+  {
+    "state": "Jammu And Kashmir",
+    "production": 587.0,
+    "percentshare": 0.52,
+    "map_state_code": "IN-JK"
+  },
+  {
+    "state": "Jharkhand",
+    "production": 481.0,
+    "percentshare": 0.42,
+    "map_state_code": "IN-JH"
+  },
+  {
+    "state": "Karnataka",
+    "production": 190.0,
+    "percentshare": 0.17,
+    "map_state_code": "IN-KA"
+  },
+  {
+    "state": "Chhattisgarh",
+    "production": 181.0,
+    "percentshare": 0.16,
+    "map_state_code": "IN-CT"
+  },
+  {
+    "state": "Delhi",
+    "production": 80.0,
+    "percentshare": 0.07,
+    "map_state_code": "IN-DL"
+  },
+  {
+    "state": "Assam",
+    "production": 13.0,
+    "percentshare": 0.01,
+    "map_state_code": "IN-AS"
+  },
+  {
+    "state": "Arunachal Pradesh",
+    "production": 7.0,
+    "percentshare": 0.01,
+    "map_state_code": "IN-AR"
+  },
+  {
+    "state": "Telangana",
+    "production": 7.0,
+    "percentshare": 0.01,
+    "map_state_code": "IN-TG"
+  },
+  {
+    "state": "Ladakh",
+    "production": 7.0,
+    "percentshare": 0.01,
+    "map_state_code": "IN-LK"
+  },
+  {
+    "state": "Manipur",
+    "production": 6.0,
+    "percentshare": 0.01,
+    "map_state_code": "IN-MN"
+  },
+  {
+    "state": "Nagaland",
+    "production": 3.0,
+    "percentshare": 0.0,
+    "map_state_code": "IN-NL"
+  },
+  {
+    "state": "Chandigarh",
+    "production": 3.0,
+    "percentshare": 0.0,
+    "map_state_code": "IN-CH"
+  }
+]

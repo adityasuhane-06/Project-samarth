@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Samarth - Agricultural Data Q&A</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .api-key-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .api-key-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .api-key-section input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+
+        .api-key-section small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .sample-questions {
+            margin-bottom: 25px;
+        }
+
+        .sample-questions h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .sample-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            background: #f0f4ff;
+            color: #667eea;
+            border: 1px solid #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .sample-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .query-section {
+            margin-bottom: 25px;
+        }
+
+        .query-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            background: #667eea;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-section {
+            margin-top: 20px;
+        }
+
+        .answer-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 6px solid #667eea;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .answer-box h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .answer-box h3::before {
+            content: '💡';
+            font-size: 24px;
+        }
+
+        .answer-text {
+            color: #2d3748;
+            line-height: 2;
+            white-space: pre-wrap;
+            font-size: 16px;
+        }
+
+        /* Highlight numbers in the answer */
+        .answer-text strong {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* Key metrics display */
+        .metrics-highlight {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .metrics-highlight .value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .metrics-highlight .label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Info boxes for financial years, etc */
+        .info-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 5px;
+        }
+
+        .source-tag {
+            display: inline-block;
+            background: #e6f2ff;
+            color: #0066cc;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .sources-section {
+            margin-top: 20px;
+        }
+
+        .sources-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .source-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #e0e7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .source-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(102,126,234,0.2);
+            border-color: #667eea;
+        }
+
+        .source-card strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .source-card div {
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .source-card a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            word-break: break-all;
+            font-weight: 500;
+        }
+
+        .source-card a:hover {
+            text-decoration: underline;
+        }
+
+        .error-box {
+            background: #fee;
+            border-left: 4px solid #f44;
+            padding: 20px;
+            border-radius: 8px;
+            color: #c33;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const API_URL = 'http://localhost:8000';
+
+        const SAMPLE_QUESTIONS = [
+            "Compare the average annual rainfall in Punjab and Haryana for the last 3 years.",
+            "What are the top 3 most produced crops in Punjab in 2022-23?",
+            "Which district in Punjab has the highest rice production in 2022-23?",
+            "Analyze the production trend of Rice in Punjab over the available years."
+        ];
+
+        // Format answer to beautify numbers and add styling
+        function formatAnswer(answer) {
+            let formatted = answer;
+            
+            // Highlight large numbers (e.g., 14356.0, 10.42%)
+            formatted = formatted.replace(/\*\*([0-9,]+\.?[0-9]*)\*\*/g, '<span style="font-size: 24px; font-weight: bold; color: #667eea; background: white; padding: 4px 12px; border-radius: 6px; display: inline-block; margin: 0 4px; box-shadow: 0 2px 8px rgba(102,126,234,0.2);">$1</span>');
+            
+            // Highlight percentages
+            formatted = formatted.replace(/([0-9]+\.?[0-9]*)%/g, '<span style="color: #28a745; font-weight: 600;">$1%</span>');
+            
+            // Highlight financial years
+            formatted = formatted.replace(/(\d{4}-\d{2,4})/g, '<span class="info-badge">$1</span>');
+            
+            // Format [Source: ...] tags
+            formatted = formatted.replace(/\[Source: ([^\]]+)\]/g, '<span class="source-tag">📊 Source: $1</span>');
+            
+            // Convert line breaks to <br>
+            formatted = formatted.replace(/\n\n/g, '<br><br>');
+            formatted = formatted.replace(/\n/g, '<br>');
+            
+            // Highlight product codes
+            formatted = formatted.replace(/Product[_ ]Code[: ]+(\d+)/gi, '<strong>Product Code: $1</strong>');
+            
+            // Bold state names when mentioned
+            formatted = formatted.replace(/\b(Punjab|Haryana|Karnataka|Maharashtra|Tamil Nadu|Uttar Pradesh|West Bengal|Bihar|Rajasthan|Gujarat|Madhya Pradesh|Andhra Pradesh|Kerala|Odisha|Telangana|Assam)\b/g, '<strong style="color: #2d3748;">$1</strong>');
+            
+            return formatted;
+        }
+
+        function App() {
+            const [question, setQuestion] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [result, setResult] = useState(null);
+            const [error, setError] = useState(null);
+            const [serverHealth, setServerHealth] = useState(null);
+
+            useEffect(() => {
+                checkServerHealth();
+            }, []);
+
+            const checkServerHealth = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/api/health`);
+                    const data = await response.json();
+                    setServerHealth(data);
+                } catch (err) {
+                    console.error('Server health check failed:', err);
+                }
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+
+                if (!question.trim()) {
+                    setError('Please enter a question');
+                    return;
+                }
+
+                setLoading(true);
+                setError(null);
+                setResult(null);
+
+                try {
+                    const response = await fetch(`${API_URL}/api/query`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            question: question
+                        })
+                    });                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Query failed');
+                    }
+
+                    const data = await response.json();
+                    setResult(data);
+                } catch (err) {
+                    setError(err.message || 'An error occurred while processing your query');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const loadSampleQuestion = (sampleQ) => {
+                setQuestion(sampleQ);
+                setError(null);
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>🌾 Project Samarth</h1>
+                        <p>
+                            Intelligent Q&A System for Indian Agricultural Data
+                            <br />
+                            Powered by Google Gemini AI & data.gov.in datasets from Ministry of Agriculture and IMD
+                        </p>
+                        {serverHealth && (
+                            <div className="stats-grid">
+                                <div className="stat-card">
+                                    <div className="stat-value">{serverHealth.crop_records}</div>
+                                    <div className="stat-label">Crop Records</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">{serverHealth.rainfall_records}</div>
+                                    <div className="stat-label">Rainfall Records</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">{serverHealth.status}</div>
+                                    <div className="stat-label">System Status</div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="main-card">
+                        <div className="sample-questions">
+                            <h3>Sample Questions:</h3>
+                            {SAMPLE_QUESTIONS.map((q, idx) => (
+                                <button
+                                    key={idx}
+                                    className="sample-btn"
+                                    onClick={() => loadSampleQuestion(q)}
+                                >
+                                    {q}
+                                </button>
+                            ))}
+                        </div>
+
+                        <form onSubmit={handleSubmit}>
+                            <div className="query-section">
+                                <textarea
+                                    className="query-input"
+                                    value={question}
+                                    onChange={(e) => setQuestion(e.target.value)}
+                                    placeholder="Ask a question about agricultural data... e.g., 'Compare rice production in Punjab and Haryana'"
+                                />
+                            </div>
+                            <button 
+                                type="submit" 
+                                className="submit-btn"
+                                disabled={loading}
+                            >
+                                {loading ? 'Processing...' : 'Get Answer'}
+                            </button>
+                        </form>
+
+                        {loading && (
+                            <div className="loading">
+                                <div className="spinner"></div>
+                                <p>Analyzing your question and querying datasets...</p>
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="error-box">
+                                <strong>Error:</strong> {error}
+                            </div>
+                        )}
+
+                        {result && (
+                            <div className="result-section">
+                                <div className="answer-box">
+                                    <h3>Answer</h3>
+                                    <div 
+                                        className="answer-text" 
+                                        dangerouslySetInnerHTML={{
+                                            __html: formatAnswer(result.answer)
+                                        }}
+                                    />
+                                </div>
+
+                                {result.data_sources && result.data_sources.length > 0 && (
+                                    <div className="sources-section">
+                                        <h3>📚 Data Sources:</h3>
+                                        {result.data_sources.map((source, idx) => (
+                                            <div key={idx} className="source-card">
+                                                <strong>{source.dataset}</strong>
+                                                <div>Source: {source.source}</div>
+                                                <a href={source.url} target="_blank" rel="noopener noreferrer">
+                                                    {source.url}
+                                                </a>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
