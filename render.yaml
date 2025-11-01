@@ -8,7 +8,7 @@
       "region": "oregon",
       "plan": "free",
       "buildCommand": "pip install -r src/requirements.txt",
-      "startCommand": "cd src && python app.py",
+      "startCommand": "cd src && python app_modular.py",
       "envVars": [
         {
           "key": "SECRET_KEY",
