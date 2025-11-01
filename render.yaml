@@ -1,0 +1,40 @@
+{
+  "$schema": "https://render.com/schema/v1",
+  "services": [
+    {
+      "type": "web",
+      "name": "project-samarth-backend",
+      "env": "python",
+      "region": "oregon",
+      "plan": "free",
+      "buildCommand": "pip install -r src/requirements.txt",
+      "startCommand": "cd src && python app.py",
+      "envVars": [
+        {
+          "key": "SECRET_KEY",
+          "sync": false
+        },
+        {
+          "key": "API_GUESSING_MODELKEY",
+          "sync": false
+        },
+        {
+          "key": "DATABASE_URL",
+          "sync": false
+        },
+        {
+          "key": "DATA_GOV_API_KEY",
+          "sync": false
+        },
+        {
+          "key": "USE_REAL_API",
+          "value": "true"
+        },
+        {
+          "key": "PORT",
+          "value": "8000"
+        }
+      ]
+    }
+  ]
+}
