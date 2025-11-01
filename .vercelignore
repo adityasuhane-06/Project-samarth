@@ -38,12 +38,24 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+test/
+tests/
 
-# Data
+# Data - EXCLUDE ALL DATA FILES
 *.csv
+*.json
 *.db
 *.sqlite
 *.sqlite3
+data/
+datasets/
+test_data/
+api_tests/
+
+# Documentation
+docs/
+*.md
+!README.md
 
 # Logs
 *.log
@@ -51,3 +63,12 @@ logs/
 
 # Deployment
 .vercel
+
+# Frontend (not needed for backend deployment)
+frontend/
+
+# Deployment configs
+deployment/
+
+# Large test folders
+test/api_tests/
