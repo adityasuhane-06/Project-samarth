@@ -4,49 +4,62 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         USER INTERFACE                          │
-│                    (React Frontend - index.html)                │
-│                                                                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│  │   Question   │  │   Sample     │  │   Results    │        │
-│  │   Input      │  │   Questions  │  │   Display    │        │
-│  └──────────────┘  └──────────────┘  └──────────────┘        │
+│                      USER INTERFACE                              │
+│          (React 18 + Vite 5 + Tailwind CSS 3)                   │
+│              Deployed on Vercel (Static Site)                    │
+│                                                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
+│  │   QueryForm  │  │    Server    │  │   Result     │         │
+│  │   Component  │  │    Stats     │  │   Display    │         │
+│  │              │  │  Component   │  │  Component   │         │
+│  └──────────────┘  └──────────────┘  └──────────────┘         │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │  9 Modular React Components + Rich Formatting        │      │
+│  │  - Header, SampleQuestions, LoadingSpinner           │      │
+│  │  - AnswerBox (cards, badges, syntax highlighting)    │      │
+│  │  - DataSources, ErrorMessage                         │      │
+│  └──────────────────────────────────────────────────────┘      │
 └─────────────────────────────────────────────────────────────────┘
                             │
                             │ HTTP POST /api/query
+                            │ Axios Client (CORS enabled)
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      FLASK API SERVER                           │
-│                        (app.py)                                 │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────┐     │
-│  │         Query Processing Pipeline                     │     │
-│  │                                                       │     │
-│  │  1. Receive Question                                 │     │
-│  │  2. Extract Parameters (via Claude AI)              │     │
-│  │  3. Execute Query on Data                            │     │
-│  │  4. Generate Answer (via Claude AI)                  │     │
-│  │  5. Return with Citations                            │     │
-│  └──────────────────────────────────────────────────────┘     │
-│                                                                 │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐          │
-│  │   Query     │  │    Data      │  │   Answer    │          │
-│  │  Processor  │  │   Query      │  │  Generator  │          │
-│  │             │  │   Engine     │  │             │          │
-│  └─────────────┘  └──────────────┘  └─────────────┘          │
+│                   FASTAPI BACKEND SERVER                         │
+│                  (app_modular.py - Production)                   │
+│            Deployed on Render (https://*.onrender.com)          │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │    AI Agent Pipeline (Two-Model Architecture)        │      │
+│  │                                                       │      │
+│  │  STEP 0: MongoDB Cache Check (0.1s if hit)          │      │
+│  │  STEP 1: QueryRouter Agent (Dataset Selection)       │      │
+│  │  STEP 2: Data Fetching (5 Sources)                  │      │
+│  │  STEP 3: QueryProcessor Agent (Answer Generation)    │      │
+│  │  STEP 4: Cache Response (MongoDB Atlas)             │      │
+│  └──────────────────────────────────────────────────────┘      │
+│                                                                  │
+│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐           │
+│  │ QueryRouter │  │     Data     │  │   Query     │           │
+│  │    Agent    │  │    Query     │  │  Processor  │           │
+│  │  (Gemini)   │  │    Engine    │  │    Agent    │           │
+│  │             │  │              │  │  (Gemini)   │           │
+│  └─────────────┘  └──────────────┘  └─────────────┘           │
 └─────────────────────────────────────────────────────────────────┘
                             │
             ┌───────────────┼───────────────┐
             │               │               │
             ▼               ▼               ▼
 ┌─────────────────┐  ┌─────────────┐  ┌──────────────────┐
-│  Claude AI API  │  │ Data Cache  │  │  data.gov.in     │
-│  (Anthropic)    │  │             │  │  Integration     │
-│                 │  │ - Crop Data │  │                  │
-│ - Parameter     │  │ - Rainfall  │  │ - Fetch Data     │
-│   Extraction    │  │             │  │ - Transform      │
-│ - Answer        │  │             │  │ - Normalize      │
-│   Generation    │  │             │  │                  │
+│  Google Gemini  │  │  MongoDB    │  │  data.gov.in     │
+│  2.5-flash API  │  │   Atlas     │  │  Integration     │
+│                 │  │             │  │                  │
+│ Agent 1:        │  │ - Crop Data │  │ - Fetch Data     │
+│  Routing        │  │ - Rainfall  │  │ - Transform      │
+│                 │  │ - Cache TTL │  │ - Normalize      │
+│ Agent 2:        │  │ - 135x      │  │                  │
+│  Processing     │  │   Faster    │  │                  │
 └─────────────────┘  └─────────────┘  └──────────────────┘
                                                │
                                                │
@@ -62,28 +75,44 @@
 
 ## Component Details
 
-### 1. Frontend (index.html)
-**Technology**: React (via CDN)
+### 1. Frontend (React + Vite + Tailwind CSS)
+**Technology**: React 18, Vite 5.0.8, Tailwind CSS 3.3.6, Axios 1.6.0
+
 **Responsibilities**:
-- User input collection
-- Display of sample questions
-- Real-time query submission
-- Results rendering with citations
-- Error handling
+- User input collection with validation
+- Display of sample question buttons
+- Real-time query submission to backend
+- Rich answer formatting (cards, badges, syntax highlighting)
+- Error handling with user-friendly messages
+- Real-time server statistics display
+- Responsive design (desktop, tablet, mobile)
+
+**Key Components** (9 modular components):
+- **Header.jsx**: App title, badges, navigation
+- **ServerStats.jsx**: Live cache statistics cards
+- **SampleQuestions.jsx**: Quick-start question buttons
+- **QueryForm.jsx**: Input form with validation
+- **LoadingSpinner.jsx**: Animated loading state
+- **ErrorMessage.jsx**: Error display component
+- **ResultDisplay.jsx**: Result container
+- **AnswerBox.jsx**: Rich formatted answer with HTML
+- **DataSources.jsx**: Source citations with links
 
 **Key Features**:
-- Clean, modern UI with gradient design
-- Mobile responsive
-- Loading states
-- Source citation display
-- API key management
+- **Component-based** architecture for reusability
+- **Tailwind CSS** utility-first styling with custom theme
+- **Vite** for lightning-fast builds (5-10x faster than webpack)
+- **Axios** for HTTP client with interceptors
+- **Environment variables** for API URL configuration
+- **Production deployment** on Vercel with auto-deploy from GitHub
 
-### 2. Backend API Server (app.py)
-**Technology**: Flask + Python
+### 2. Backend API Server (FastAPI)
+**Technology**: FastAPI 0.104.1, Python 3.11.9, Uvicorn
+
 **Responsibilities**:
-- Request handling
-- Query orchestration
-- Data management
+- Request handling with CORS middleware
+- AI Agent orchestration (two-model system)
+- Data management and caching
 - Response formatting
 
 **Endpoints**:

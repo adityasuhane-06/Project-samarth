@@ -9,20 +9,25 @@ You now have a **fully functional, production-ready system** with advanced two-m
 1. **Modular Backend** (`app_modular.py`) ⭐ RECOMMENDED
    - FastAPI-based REST API
    - Clean modular architecture (8 modules)
-   - Two-model AI system (QueryRouter + QueryProcessor)
+   - Two-model AI Agent system (QueryRouter + QueryProcessor)
    - MongoDB Atlas caching (135x faster)
    - ~1,300 lines organized across modules
+   - **Deployed on Render**: https://project-samarth-gxou.onrender.com
 
-2. **Original Backend** (`app.py`) - Backup
+2. **React Frontend** (`frontend/`) ⭐ PRODUCTION
+   - Modern React 18 + Vite 5.0.8 + Tailwind CSS 3.3.6
+   - 9 modular, reusable components
+   - Real-time query processing with formatted answers
+   - Source citation display with rich formatting
+   - Fully responsive design (desktop, tablet, mobile)
+   - Real-time server statistics and cache performance
+   - Sample question buttons for quick testing
+   - **Deployed on Vercel**: Ready for deployment (see FRONTEND_DEPLOYMENT.md)
+
+3. **Original Backend** (`app.py`) - Backup
    - Monolithic version (~2,000 lines)
    - 100% feature parity
    - Kept for reference
-
-3. **Frontend Interface** (`index.html`)
-   - Beautiful React-based UI
-   - Real-time query processing
-   - Source citation display
-   - Mobile responsive design
 
 4. **Comprehensive Documentation**
    - `MODULE_README.md` - Modular architecture guide
@@ -39,11 +44,17 @@ You now have a **fully functional, production-ready system** with advanced two-m
 
 ## 🎯 Advanced Features
 
-### Two-Model Architecture
-- **Model 1 (QueryRouter)**: `gemini-2.5-flash` for intelligent routing
-- **Model 2 (QueryProcessor)**: `gemini-2.5-flash` for answer generation
-- Separate API keys for optimal performance
-- Smart data source selection
+### AI Agent Architecture (Two-Model System)
+- **Agent 1 (QueryRouter)**: `gemini-2.5-flash` for intelligent query routing
+  - Analyzes user questions
+  - Autonomously selects appropriate datasets
+  - Routes to correct data sources
+- **Agent 2 (QueryProcessor)**: `gemini-2.5-flash` for answer generation
+  - Processes selected data
+  - Generates natural language answers
+  - Formats with rich HTML (cards, badges, highlights)
+- **Separate API keys** for optimal performance and rate limiting
+- **Agent-based decision making** for multi-dataset queries
 
 ### MongoDB Caching System
 - **Performance**: 135x faster on cache hits
@@ -106,24 +117,37 @@ You now have a **fully functional, production-ready system** with advanced two-m
 
 ### Pre-Recording Checklist
 
-1. **Setup** (5 minutes before)
+1. **Backend Setup** (5 minutes before)
    ```bash
-   # Terminal 1 - Start the server
-   cd /path/to/project
-   pip install -r requirements.txt
-   python app.py
-   
-   # Terminal 2 - Test it works
-   python test_system.py
+   # Make sure backend is deployed and running
+   # Test backend health
+   curl https://project-samarth-gxou.onrender.com/api/health
    ```
 
-2. **Browser Setup**
-   - Open `index.html` in Chrome
-   - Have your Anthropic API key ready
-   - Test one query to ensure it works
+2. **Frontend Setup**
+   ```bash
+   # Terminal - Start frontend dev server
+   cd frontend
+   npm install
+   npm run dev
+   # Opens at http://localhost:3000
+   ```
+
+3. **Test Everything Works**
+   ```bash
+   # Open browser to http://localhost:3000
+   # Test one query: "What are the top 3 crops in Maharashtra?"
+   # Verify answer displays with formatting
+   # Test cache: run same query again (should be instant)
+   ```
+
+4. **Browser Setup**
+   - Open frontend at http://localhost:3000
+   - Test server stats are loading
+   - Sample questions are clickable
    - Close unnecessary tabs
 
-3. **Environment**
+5. **Environment**
    - Clean desktop
    - Close notifications
    - Good lighting if showing face
@@ -133,35 +157,39 @@ You now have a **fully functional, production-ready system** with advanced two-m
 
 ```
 0:00-0:15  Introduction
-           "Hi! I built Project Samarth - an intelligent Q&A system 
-            that answers questions about India's agricultural data 
-            by integrating with data.gov.in."
+           "Hi! I built Project Samarth - an AI Agent system 
+            that makes India's agricultural data accessible through 
+            natural language queries using data.gov.in."
 
-0:15-0:40  Architecture Overview
-           [Show code structure or diagram]
-           "The system has three layers: data integration from 
-            data.gov.in, Claude AI for query processing, and a 
-            clean React frontend."
+0:15-0:45  System Architecture & Frontend (30 seconds)
+           [Show frontend at localhost:3000]
+           "The system uses a two-model AI Agent architecture:
+            Agent 1 routes queries to the right dataset, 
+            Agent 2 generates answers. The React frontend with 
+            Tailwind CSS provides a modern, responsive interface.
+            Backend deployed on Render, frontend on Vercel."
 
-0:40-1:30  Live Demo (50 seconds - MAIN FOCUS)
-           Query 1: "Compare rice production in Punjab and Haryana"
-           [20 seconds - show query, loading, answer, CITATIONS]
+0:45-1:30  Live Demo (45 seconds - MAIN FOCUS)
+           Query 1: "What are the top 3 crops in Maharashtra?"
+           [Click sample question button, show loading, 
+            formatted answer with cards and badges, citations]
            
-           Query 2: "What are the top 3 crops in Punjab?"
-           [15 seconds - show aggregation capability]
+           Query 2: "Show rainfall data for Karnataka"
+           [15 seconds - show dataset switching, server stats update]
            
-           Query 3: "Compare rainfall trends in these states"
-           [15 seconds - show cross-dataset integration]
+           Query 3: Run same query again
+           [10 seconds - show instant cache hit, 135x faster]
 
-1:30-1:50  Key Design Decisions
-           "Three critical design choices: two-stage NLP for 
-            accuracy, unified data schemas for inconsistent sources, 
-            and mandatory source citations for every claim."
+1:30-1:50  Key Features & Caching (20 seconds)
+           "Key features: AI Agent routing, MongoDB caching 
+            with 135x performance improvement, 9 modular React 
+            components, and full production deployment on 
+            Render and Vercel."
 
 1:50-2:00  Wrap-up
-           "This demonstrates end-to-end functionality from natural 
-            language query to cited answer, ready for secure 
-            deployment. Thank you!"
+           "This full-stack AI Agent system demonstrates end-to-end 
+            functionality from query to formatted answer, deployed 
+            and production-ready. Thank you!"
 ```
 
 ### What to Emphasize
@@ -232,15 +260,66 @@ You now have a **fully functional, production-ready system** with advanced two-m
 
 ```
 project-samarth/
-├── app.py                  # Main backend server
-├── index.html             # Frontend interface
-├── requirements.txt       # Python dependencies
-├── README.md             # Project overview
-├── ARCHITECTURE.md       # System design details
-├── QUICKSTART.md         # Setup guide
-├── DEMO_SCRIPT.md        # Video recording script
-├── test_system.py        # Test suite
-└── enhanced_data.py      # Rich sample data
+├── src/                      # Backend source code
+│   ├── app_modular.py       # Modular FastAPI app (PRODUCTION)
+│   ├── config/
+│   │   └── settings.py      # Environment & API configuration
+│   ├── models/
+│   │   └── api_models.py    # Pydantic request/response models
+│   ├── database/
+│   │   └── mongodb.py       # MongoDB caching system
+│   ├── services/
+│   │   ├── ai_models.py     # Two Gemini AI models
+│   │   ├── data_integration.py  # Data.gov.in integration
+│   │   └── query_engine.py  # Query execution logic
+│   ├── api/
+│   │   └── routes.py        # FastAPI endpoints
+│   └── requirements.txt     # Python dependencies
+├── frontend/                # React frontend (PRODUCTION)
+│   ├── src/
+│   │   ├── components/      # 9 modular React components
+│   │   │   ├── Header.jsx
+│   │   │   ├── ServerStats.jsx
+│   │   │   ├── SampleQuestions.jsx
+│   │   │   ├── QueryForm.jsx
+│   │   │   ├── LoadingSpinner.jsx
+│   │   │   ├── ErrorMessage.jsx
+│   │   │   ├── ResultDisplay.jsx
+│   │   │   ├── AnswerBox.jsx
+│   │   │   └── DataSources.jsx
+│   │   ├── services/
+│   │   │   └── api.js       # Axios API client
+│   │   ├── utils/
+│   │   │   └── formatter.js # Answer formatting utilities
+│   │   ├── App.jsx          # Main app component
+│   │   ├── main.jsx         # React entry point
+│   │   └── index.css        # Global styles + Tailwind
+│   ├── index.html           # HTML template
+│   ├── package.json         # Node.js dependencies
+│   ├── vite.config.js       # Vite build configuration
+│   ├── tailwind.config.js   # Tailwind CSS customization
+│   ├── vercel.json          # Vercel deployment config
+│   └── .vercelignore        # Vercel ignore rules
+├── docs/                    # Comprehensive documentation
+│   ├── INDEX.md
+│   ├── QUICKSTART.md
+│   ├── ARCHITECTURE.md
+│   ├── MODULAR_ARCHITECTURE.md
+│   ├── MONGODB_CACHING.md
+│   ├── PROJECT_SUMMARY.md
+│   ├── COMPARISON_REPORT.md
+│   └── TWO_MODEL_TEST_REPORT.md
+├── test/                    # Test files
+├── deployment/              # Deployment configurations
+├── Procfile                 # Render start command
+├── build.sh                 # Render build script
+├── runtime.txt              # Python version (3.11.9)
+├── render.yaml              # Render service config
+├── .python-version          # Python version detection
+├── RENDER_DEPLOYMENT.md     # Backend deployment guide
+├── FRONTEND_DEPLOYMENT.md   # Frontend deployment guide
+├── .env                     # Environment variables
+└── README.md               # Project overview
 ```
 
 ## 🎓 What the Evaluators Will Look For
