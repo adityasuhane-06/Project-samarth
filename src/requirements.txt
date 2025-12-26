@@ -1,9 +1,26 @@
-fastapi==0.104.1
+fastapi>=0.110.0
 uvicorn[standard]==0.24.0
 pandas==2.2.2
-requests==2.31.0
+requests>=2.31.0
 google-generativeai>=0.8.0
 python-dotenv==1.0.0
-pydantic==2.5.0
+pydantic>=2.5.0
 motor==3.3.2
 pymongo==4.6.0
+
+# LangChain ecosystem
+langchain>=1.0.0
+langchain-google-genai>=2.0.0
+langchain-community>=0.3.0
+langgraph>=0.2.0
+langchain-core>=0.3.0
+
+# Vector database for RAG
+chromadb>=0.5.0
+
+# Embeddings (HuggingFace - free, no API limits)
+langchain-huggingface>=0.1.0
+sentence-transformers>=2.2.0
+
+# Google Custom Search API
+google-api-python-client>=2.100.0

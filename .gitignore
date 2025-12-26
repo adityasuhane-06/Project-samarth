@@ -58,6 +58,7 @@ htmlcov/
 # Database
 *.db
 *.sqlite
+chroma_db/
 *.sqlite3
 
 # Logs
