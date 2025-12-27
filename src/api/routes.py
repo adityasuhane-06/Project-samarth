@@ -98,16 +98,19 @@ def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_
                         'reasoning_steps': reasoning_steps
                     }
                     
-                    # Cache the response
-                    print("\n💾 CACHING RESPONSE...")
-                    await mongodb_cache.cache_response(
-                        query_hash, 
-                        request.question, 
-                        query_params, 
-                        answer, 
-                        formatted_sources,  # Cache formatted sources
-                        {'agent_result': True}
-                    )
+                    # Cache the response (only if not an error)
+                    if not ("error" in answer.lower() or "please try again" in answer.lower()):
+                        print("\n💾 CACHING RESPONSE...")
+                        await mongodb_cache.cache_response(
+                            query_hash, 
+                            request.question, 
+                            query_params, 
+                            answer, 
+                            formatted_sources,  # Cache formatted sources
+                            {'agent_result': True}
+                        )
+                    else:
+                        print("\n⚠️ SKIPPING CACHE: Error response detected")
                     
                     return {
                         'question': request.question,
@@ -152,9 +155,12 @@ def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_
             answer = processor.generate_answer(request.question, results, sources)
             print(f"✅ Answer generated: {answer[:100]}...")
             
-            # STEP 4: Cache the response
-            print("\n💾 STEP 4: CACHING RESPONSE FOR FUTURE USE...")
-            await mongodb_cache.cache_response(query_hash, request.question, params, answer, sources, results)
+            # STEP 4: Cache the response (only if not an error)
+            if not ("error" in answer.lower() or "please try again" in answer.lower()):
+                print("\n💾 STEP 4: CACHING RESPONSE FOR FUTURE USE...")
+                await mongodb_cache.cache_response(query_hash, request.question, params, answer, sources, results)
+            else:
+                print("\n⚠️ SKIPPING CACHE: Error response detected")
             
             return {
                 'question': request.question,

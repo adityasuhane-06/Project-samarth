@@ -16,6 +16,7 @@ class Settings:
         # API Keys
         self.GEMINI_API_KEY = os.getenv('SECRET_KEY')
         self.GEMINI_ROUTING_KEY = os.getenv('API_GUESSING_MODELKEY')
+        self.GEMINI_AGENT_KEY = os.getenv('AGENT_API_KEY', os.getenv('SECRET_KEY'))  # Separate key for LangGraph agent
         self.DATA_GOV_API_KEY = os.getenv('DATA_GOV_API_KEY')
         
         # MongoDB Configuration

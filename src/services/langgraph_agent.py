@@ -227,7 +227,7 @@ def create_agent_node(tools: list):
     
     llm = ChatGoogleGenerativeAI(
         model="gemini-2.5-flash",
-        google_api_key=settings.GEMINI_API_KEY,
+        google_api_key=settings.GEMINI_AGENT_KEY,
         temperature=0.3
     ).bind_tools(tools)
     
@@ -328,7 +328,7 @@ def synthesize_answer_node(state: AgentState) -> dict:
     
     llm = ChatGoogleGenerativeAI(
         model="gemini-2.5-flash",
-        google_api_key=settings.GEMINI_API_KEY,
+        google_api_key=settings.GEMINI_AGENT_KEY,
         temperature=0.7
     )
     
