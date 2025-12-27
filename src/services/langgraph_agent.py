@@ -55,6 +55,11 @@ class AgentState(TypedDict):
 # TOOLS (What the agent can call)
 # ============================================================================
 
+# Import the actual data integration
+from services.data_integration import DataGovIntegration
+data_service = DataGovIntegration()
+
+
 @tool
 def fetch_apeda_production(state: str = None, year: str = None, category: str = "Agri") -> dict:
     """
@@ -66,9 +71,22 @@ def fetch_apeda_production(state: str = None, year: str = None, category: str = 
         year: Year like "2023" or "2023-24"
         category: One of Agri, Fruits, Vegetables, Spices, LiveStock, Floriculture
     """
-    # Simulated response for demo (in production, call actual API)
+    try:
+        # Fetch from real APEDA API
+        result = data_service.fetch_apeda_data(state or "All", year or "2023-24", category)
+        if result and len(result) > 0:
+            return {
+                "source": "APEDA India",
+                "years_available": "2019-2024",
+                "data": result[:10],  # Limit to 10 records
+                "note": f"APEDA production data for {category} in {state or 'All India'}"
+            }
+    except Exception as e:
+        print(f"DEBUG: APEDA API error: {e}")
+    
+    # Fallback to sample data
     return {
-        "source": "apeda_production",
+        "source": "APEDA India (sample)",
         "years_available": "2019-2024",
         "data": [
             {"state": state or "All India", "category": category, "year": year or "2023-24", 
@@ -224,17 +242,25 @@ def create_agent_node(tools: list):
         system_msg = SystemMessage(content="""You are an agricultural data assistant with access to multiple data sources.
 
 Available tools:
-1. fetch_apeda_production - For recent (2019-2024) state-level production data
-2. fetch_crop_production - For district-level crop data (2013-2015)
+1. fetch_apeda_production - For state-level production data (2019-2024) - USE FOR Indian state production queries
+2. fetch_crop_production - For district-level crop data (2013-2015) - USE FOR district-level data
 3. fetch_rainfall_data - For historical (1901-2015) or recent (2019-2024) rainfall
 4. search_knowledge_base - For general agricultural knowledge from our database
-5. web_search - For REAL-TIME web search: current news, latest policies, market prices, export regulations
+5. web_search - For REAL-TIME web search: current news, 2025+ data, latest policies, market prices
 
-IMPORTANT:
-- Call relevant tools to gather data before answering
-- You can call multiple tools if needed
-- After gathering data, provide a comprehensive answer
-- If you have enough data, generate the final answer directly""")
+CRITICAL RULES:
+1. You MUST call at least one tool before answering ANY agricultural question
+2. For years 2025 or later: Use web_search (our database only goes up to 2024)
+3. For "current", "latest", "recent" queries: Use web_search
+4. For India production data (2019-2024): Use fetch_apeda_production with state_name and year
+5. For district data: Use fetch_crop_production
+6. For general knowledge: Use search_knowledge_base
+7. NEVER answer without calling a tool first
+
+Examples:
+- "rice production in India 2023" → Call fetch_apeda_production(state_name="All India", year="2023-24", commodity="Basmati Rice")
+- "rice in Punjab 2025" → Call web_search(query="rice production Punjab India 2025")
+- "what is MSP" → Call search_knowledge_base(query="MSP minimum support price")""")
         
         # Get current messages
         messages = [system_msg] + state.get("messages", [])
@@ -333,11 +359,116 @@ Instructions:
 # ROUTING LOGIC
 # ============================================================================
 
-def should_continue(state: AgentState) -> Literal["tools", "synthesize", "end"]:
+def force_web_search_node(state: AgentState) -> dict:
+    """Force a web search when agent doesn't call it automatically for 2025+ queries"""
+    from langchain_core.messages import ToolMessage
+    
+    question = state.get("question", "")
+    print(f"DEBUG: Force web search for: {question}")
+    
+    # Create tool map
+    tool_map = {tool.name: tool for tool in ALL_TOOLS}
+    
+    # Call web search
+    try:
+        result = tool_map["web_search"].invoke({"query": question})
+        collected_data = {**state.get("collected_data", {}), "web_search": result}
+        sources = list(set(state.get("sources_used", []) + [result.get("source", "Google Search")]))
+        
+        return {
+            "collected_data": collected_data,
+            "sources_used": sources,
+            "messages": [ToolMessage(content=json.dumps(result), tool_call_id="forced_web_search")]
+        }
+    except Exception as e:
+        print(f"DEBUG: Force web search failed: {e}")
+        return {"messages": []}
+
+
+def force_apeda_search_node(state: AgentState) -> dict:
+    """Force APEDA search for historical production queries"""
+    from langchain_core.messages import ToolMessage
+    import re
+    
+    question = state.get("question", "")
+    print(f"DEBUG: Force APEDA search for: {question}")
+    
+    # Extract year from question
+    year_match = re.search(r'(201[9]|202[0-4])', question)
+    year = year_match.group(1) if year_match else "2023"
+    fiscal_year = f"{year}-{str(int(year)+1)[2:]}"  # 2023 -> 2023-24
+    
+    # Extract state if mentioned
+    states = ["punjab", "haryana", "west bengal", "uttar pradesh", "maharashtra", "tamil nadu", 
+              "andhra pradesh", "kerala", "karnataka", "madhya pradesh", "bihar", "odisha", "gujarat"]
+    state_name = "All India"
+    for s in states:
+        if s in question.lower():
+            state_name = s.title()
+            break
+    
+    # Extract commodity
+    commodities = ["rice", "wheat", "basmati", "maize", "cotton", "sugarcane", "pulses"]
+    commodity = "All"
+    for c in commodities:
+        if c in question.lower():
+            commodity = c.title()
+            if commodity == "Rice":
+                commodity = "Basmati Rice"
+            break
+    
+    tool_map = {tool.name: tool for tool in ALL_TOOLS}
+    
+    try:
+        result = tool_map["fetch_apeda_production"].invoke({
+            "state_name": state_name,
+            "year": fiscal_year,
+            "commodity": commodity
+        })
+        collected_data = {**state.get("collected_data", {}), "apeda_production": result}
+        sources = list(set(state.get("sources_used", []) + [result.get("source", "APEDA Database")]))
+        
+        return {
+            "collected_data": collected_data,
+            "sources_used": sources,
+            "messages": [ToolMessage(content=json.dumps(result), tool_call_id="forced_apeda")]
+        }
+    except Exception as e:
+        print(f"DEBUG: Force APEDA search failed: {e}")
+        return {"messages": []}
+
+
+def force_kb_search_node(state: AgentState) -> dict:
+    """Force knowledge base search for general queries"""
+    from langchain_core.messages import ToolMessage
+    
+    question = state.get("question", "")
+    print(f"DEBUG: Force KB search for: {question}")
+    
+    tool_map = {tool.name: tool for tool in ALL_TOOLS}
+    
+    try:
+        result = tool_map["search_knowledge_base"].invoke({"query": question})
+        collected_data = {**state.get("collected_data", {}), "knowledge_base": result}
+        sources = list(set(state.get("sources_used", []) + [result.get("source", "Knowledge Base")]))
+        
+        return {
+            "collected_data": collected_data,
+            "sources_used": sources,
+            "messages": [ToolMessage(content=json.dumps(result), tool_call_id="forced_kb")]
+        }
+    except Exception as e:
+        print(f"DEBUG: Force KB search failed: {e}")
+        return {"messages": []}
+
+
+def should_continue(state: AgentState) -> Literal["tools", "synthesize", "force_web_search", "force_apeda_search", "force_kb_search", "end"]:
     """
     Decide next step based on agent's output.
     This is the key routing logic that makes it agentic!
     """
+    import re
+    
     # Prevent infinite loops
     if state.get("step_count", 0) >= 5:
         print("DEBUG: Max steps reached, synthesizing answer")
@@ -355,15 +486,31 @@ def should_continue(state: AgentState) -> Literal["tools", "synthesize", "end"]:
         print("DEBUG: Data collected, synthesizing answer")
         return "synthesize"
     
-    # First step with no tools called - agent should call at least one tool
-    # Force tool usage on first step if no data yet
-    if state.get("step_count", 0) == 1 and not state.get("collected_data"):
-        print("DEBUG: No tools called on first step, synthesizing with RAG")
-        return "synthesize"
+    # Check if question needs web search (2025, current, latest, etc.)
+    question = state.get("question", "").lower()
+    needs_web = any(term in question for term in ["2025", "2026", "current", "latest", "recent", "today", "now"])
     
-    # Otherwise, end (agent decided no tools needed)
-    print("DEBUG: Agent done reasoning")
-    return "synthesize"  # Always synthesize to get an answer
+    # Check if historical data query (should use APEDA/database)
+    needs_historical = any(year in question for year in ["2019", "2020", "2021", "2022", "2023", "2024"])
+    
+    # First step with no tools called but needs web search - force web search
+    if state.get("step_count", 0) == 1 and not state.get("collected_data") and needs_web:
+        print("DEBUG: Query needs current data, forcing web search")
+        return "force_web_search"
+    
+    # First step with no tools but needs historical data - force APEDA
+    if state.get("step_count", 0) == 1 and not state.get("collected_data") and needs_historical:
+        print("DEBUG: Query needs historical data, forcing APEDA search")
+        return "force_apeda_search"
+    
+    # First step with no tools - force knowledge base search
+    if state.get("step_count", 0) == 1 and not state.get("collected_data"):
+        print("DEBUG: No tools called, forcing knowledge base search")
+        return "force_kb_search"
+    
+    # Otherwise synthesize with whatever we have
+    print("DEBUG: Synthesizing answer")
+    return "synthesize"
 
 
 # ============================================================================
@@ -387,6 +534,9 @@ def create_agricultural_agent():
     workflow.add_node("agent", create_agent_node(ALL_TOOLS))
     workflow.add_node("tools", tool_executor_node)
     workflow.add_node("synthesize", synthesize_answer_node)
+    workflow.add_node("force_web_search", force_web_search_node)
+    workflow.add_node("force_apeda_search", force_apeda_search_node)
+    workflow.add_node("force_kb_search", force_kb_search_node)
     
     # Set entry point
     workflow.set_entry_point("agent")
@@ -398,12 +548,20 @@ def create_agricultural_agent():
         {
             "tools": "tools",
             "synthesize": "synthesize",
+            "force_web_search": "force_web_search",
+            "force_apeda_search": "force_apeda_search",
+            "force_kb_search": "force_kb_search",
             "end": END
         }
     )
     
     # Tools always go back to agent for next decision
     workflow.add_edge("tools", "agent")
+    
+    # Force nodes go to synthesize
+    workflow.add_edge("force_web_search", "synthesize")
+    workflow.add_edge("force_apeda_search", "synthesize")
+    workflow.add_edge("force_kb_search", "synthesize")
     
     # Synthesize always ends
     workflow.add_edge("synthesize", END)

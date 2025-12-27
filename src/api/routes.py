@@ -2,11 +2,21 @@
 from fastapi import HTTPException, APIRouter
 from typing import Dict, Any, Callable
 from datetime import datetime
+import os
 
 from models import QueryRequest, QueryResponse, HealthResponse
 from services import QueryRouter, QueryProcessor, DataQueryEngine
 from database import MongoDBCache
 from config.settings import settings
+
+# Try to import LangGraph agent
+try:
+    from services.langgraph_agent import AgriculturalAgent
+    LANGGRAPH_AVAILABLE = True
+    print("✅ LangGraph Agent loaded successfully")
+except ImportError as e:
+    LANGGRAPH_AVAILABLE = False
+    print(f"⚠️ LangGraph Agent not available: {e}")
 
 
 def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_engine: Callable):
@@ -14,11 +24,21 @@ def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_
     
     router = APIRouter()
     
+    # Initialize LangGraph agent if available
+    langgraph_agent = None
+    if LANGGRAPH_AVAILABLE:
+        try:
+            langgraph_agent = AgriculturalAgent()
+            print("✅ LangGraph Agent initialized")
+        except Exception as e:
+            print(f"⚠️ Failed to initialize LangGraph Agent: {e}")
+    
     @router.post("/api/query", response_model=QueryResponse)
     async def process_query(request: QueryRequest):
         """
         Main endpoint for processing natural language queries about agricultural data.
-        Uses two-model architecture with MongoDB caching.
+        Uses LangGraph agentic workflow with 5 tools including web search.
+        Falls back to two-model architecture if LangGraph unavailable.
         """
         try:
             print(f"\n{'='*60}")
@@ -44,7 +64,53 @@ def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_
                     'raw_results': cached.get('raw_results', {})
                 }
             
-            print(f"❌ Cache miss. Processing query from scratch...")
+            print(f"❌ Cache miss. Processing query...")
+            
+            # Try LangGraph Agent first (has web search capability)
+            if langgraph_agent is not None:
+                print("\n🤖 USING LANGGRAPH AGENTIC WORKFLOW...")
+                try:
+                    result = langgraph_agent.query(request.question)
+                    
+                    answer = result.get('answer', 'No answer generated')
+                    sources = result.get('sources_used', [])
+                    reasoning_steps = result.get('reasoning_steps', 0)
+                    
+                    print(f"✅ Agent completed in {reasoning_steps} steps")
+                    print(f"✅ Sources used: {sources}")
+                    
+                    # Format for frontend compatibility
+                    query_params = {
+                        'agent_mode': True,
+                        'tools_used': sources,
+                        'reasoning_steps': reasoning_steps
+                    }
+                    
+                    # Cache the response
+                    print("\n💾 CACHING RESPONSE...")
+                    await mongodb_cache.cache_response(
+                        query_hash, 
+                        request.question, 
+                        query_params, 
+                        answer, 
+                        sources, 
+                        {'agent_result': True}
+                    )
+                    
+                    return {
+                        'question': request.question,
+                        'answer': answer,
+                        'data_sources': sources,
+                        'query_params': query_params,
+                        'raw_results': {'agent_mode': True, 'reasoning_steps': reasoning_steps}
+                    }
+                    
+                except Exception as agent_error:
+                    print(f"⚠️ LangGraph Agent failed: {agent_error}")
+                    print("⚠️ Falling back to two-model architecture...")
+            
+            # Fallback to original two-model architecture
+            print("\n🔀 USING TWO-MODEL ARCHITECTURE (fallback)...")
             
             # Get API keys
             routing_api_key = settings.GEMINI_ROUTING_KEY
@@ -64,7 +130,7 @@ def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_
             
             # STEP 2: Execute query on data
             print("\n📊 STEP 2: FETCHING DATA FROM APIs...")
-            query_engine = get_query_engine()  # Get query engine with loaded data
+            query_engine = get_query_engine()
             results, sources = query_engine.execute_query(params)
             print(f"✅ Data fetched. Results size: {len(str(results))} chars, Sources: {len(sources)}")
             
