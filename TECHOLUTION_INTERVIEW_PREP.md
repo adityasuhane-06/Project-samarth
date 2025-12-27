@@ -23,7 +23,8 @@
 - **StateGraph** - Typed state machine for multi-step reasoning
 - **Tool Binding** - LLM autonomously decides which tools to call
 - **Conditional Routing** - Agent loops until answer is complete
-- **4 Agricultural Tools** - APEDA, Crop, Rainfall, Knowledge Base
+- **5 Agricultural Tools** - APEDA, Crop, Rainfall, Knowledge Base, **Web Search**
+- **Google Custom Search** - Real-time web search for current policies/news
 
 ---
 
@@ -45,11 +46,11 @@
 
 > "I built a true agentic system using LangGraph. It has:
 > 1. **Typed State** - An `AgentState` TypedDict that tracks question, messages, collected data, and sources used
-> 2. **Tool Binding** - Four tools the agent can call: APEDA production, crop data, rainfall, and RAG search
+> 2. **Tool Binding** - Five tools the agent can call: APEDA production, crop data, rainfall, RAG search, and **real-time web search**
 > 3. **Conditional Routing** - After each LLM call, I check if it wants to call tools or synthesize an answer
 > 4. **Multi-step Reasoning** - The agent can loop through tools multiple times before final answer
 >
-> For example, when asked 'Compare rice production with rainfall in 2020', the agent autonomously decided to call TWO tools - fetch_apeda_production AND fetch_rainfall_data - then synthesized both results."
+> For example, when asked 'What is the current mango export situation?', the agent used 3 tools across 3 reasoning steps - it fetched APEDA production data, searched the knowledge base, AND performed a Google web search for latest 2024 export policies."
 
 ### 🆕 "What's the difference between chains and agents?"
 
@@ -124,6 +125,9 @@ workflow.add_conditional_edges("agent", should_continue,
 ### 🆕 Q3: "How does your agent decide which tools to use?"
 > "The LLM has tool descriptions bound to it. When I call `llm.bind_tools(tools)`, it can output `tool_calls` in its response. My routing logic checks if `tool_calls` exists - if yes, execute them and loop back to agent. The LLM autonomously figures out from the question which tools are relevant."
 
+### 🆕 Q3b: "How do you handle real-time information?"
+> "I integrated Google Custom Search API as a tool. When the agent needs current data - like '2024 export policies' or 'latest MSP rates' - it autonomously decides to call the `web_search` tool. This returns top 5 Google results with snippets, which the agent then synthesizes with other data sources."
+
 ### 🆕 Q4: "How do you prevent infinite loops in your agent?"
 > "Two safeguards:
 > 1. `step_count` in state - if it exceeds 5, force synthesize
@@ -159,9 +163,10 @@ python -c "import sys; sys.path.insert(0, '.'); from services.langgraph_agent im
 |------|---------|
 | `src/services/langchain_ai.py` | LangChain-powered router & processor |
 | `src/services/rag_service.py` | RAG with ChromaDB + HuggingFace embeddings |
-| `src/services/langgraph_agent.py` | 🆕 **LangGraph agentic workflow** |
+| `src/services/langgraph_agent.py` | 🆕 **LangGraph agentic workflow with 5 tools** |
 | `src/test_langchain_rag.py` | Test suite for verification |
 | `chroma_db/` | Local vector database storage |
+| `.env` | API keys (Gemini, Chroma Cloud, Google Search) |
 
 ---
 
@@ -173,6 +178,8 @@ python -c "import sys; sys.path.insert(0, '.'); from services.langgraph_agent im
 - **LCEL**: "LangChain Expression Language - pipe syntax for chaining operations"
 - **LangGraph**: "Framework for building stateful, multi-step AI agents"
 - **Agentic AI**: "LLM autonomously decides actions and tool usage"
+- **Tool Calling**: "LLM outputs structured tool_calls that get executed"
+- **Google Custom Search**: "Real-time web search via API for current information"
 
 ---
 
@@ -187,9 +194,9 @@ python -c "import sys; sys.path.insert(0, '.'); from services.langgraph_agent im
   ChromaDB vector database and HuggingFace embeddings, enabling 
   semantic search over 16 agricultural knowledge documents.
 
-• Built agentic workflow using LangGraph with autonomous tool 
-  selection, multi-step reasoning, and conditional state routing
-  for complex agricultural queries across multiple data sources.
+• Built agentic workflow using LangGraph with 5 autonomous tools 
+  including real-time Google web search, multi-step reasoning, 
+  and conditional state routing for complex agricultural queries.
 ```
 
 ---

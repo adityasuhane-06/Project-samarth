@@ -19,6 +19,8 @@
 
 ### **The Problem I Saw**
 
+
+
 A few months ago, I was exploring data.gov.in and discovered something interesting: the Government of India maintains extensive agricultural data spanning over 120 years - from 1901 to 2024. This includes APEDA production statistics, IMD rainfall records, district-level crop data, and more.
 
 But here's the problem: this data is scattered across multiple APIs, stored in different formats, and requires technical knowledge to access. If you're a farmer, researcher, or student who simply wants to know "What's the rice production in Punjab for 2023?", you'd need to:
