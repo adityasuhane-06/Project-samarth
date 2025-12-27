@@ -56,10 +56,16 @@ def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_
             cached = await mongodb_cache.get_cached_response(query_hash)
             if cached:
                 print(f"⚡ RETURNING CACHED RESPONSE (saved ~3-4 seconds!)")
+                # Ensure data_sources is list of dicts
+                cached_sources = cached.get('data_sources', [])
+                if cached_sources and isinstance(cached_sources[0], str):
+                    # Convert old format (list of strings) to new format (list of dicts)
+                    cached_sources = [{"name": src, "type": "cached"} for src in cached_sources]
+                
                 return {
                     'question': request.question,
                     'answer': cached['answer'],
-                    'data_sources': cached['data_sources'],
+                    'data_sources': cached_sources,
                     'query_params': cached['query_params'],
                     'raw_results': cached.get('raw_results', {})
                 }
@@ -79,6 +85,12 @@ def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_
                     print(f"✅ Agent completed in {reasoning_steps} steps")
                     print(f"✅ Sources used: {sources}")
                     
+                    # Format sources as list of dicts for response model
+                    formatted_sources = [
+                        {"name": src, "type": "agent_tool"}
+                        for src in sources
+                    ] if sources else [{"name": "LangGraph Agent", "type": "agent"}]
+                    
                     # Format for frontend compatibility
                     query_params = {
                         'agent_mode': True,
@@ -93,14 +105,14 @@ def create_routes(app, data_cache: dict, mongodb_cache: MongoDBCache, get_query_
                         request.question, 
                         query_params, 
                         answer, 
-                        sources, 
+                        formatted_sources,  # Cache formatted sources
                         {'agent_result': True}
                     )
                     
                     return {
                         'question': request.question,
                         'answer': answer,
-                        'data_sources': sources,
+                        'data_sources': formatted_sources,  # Use formatted sources
                         'query_params': query_params,
                         'raw_results': {'agent_mode': True, 'reasoning_steps': reasoning_steps}
                     }
