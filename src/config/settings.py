@@ -1,11 +1,10 @@
-"""Application settings and configuration"""
+
 import os
 import pathlib
 from dotenv import load_dotenv
 
 
 class Settings:
-    """Application settings loaded from environment variables"""
     
     def __init__(self):
         # Load environment variables from .env file in parent directory
