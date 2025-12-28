@@ -1,5 +1,7 @@
 """AI models for query routing and processing"""
 import json
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning, module="google.generativeai")
 import google.generativeai as genai
 
 
