@@ -194,9 +194,9 @@ Return: {
 ### 1. Update Render Deployment
 ```bash
 # Set environment variables in Render dashboard:
-SECRET_KEY=AIzaSyCAyurAzdmBcx-TBD2Y5e1pbQ3BYVaNprM
-AGENT_API_KEY=AIzaSyDOEylfaMuGGRyh5Sz3snvWBFV2ZSFTgtA
-API_GUESSING_MODELKEY=AIzaSyAN5LRvs517X_OOJChfUm0mgnr1gs24zDw
+SECRET_KEY=<your_gemini_api_key_1>
+AGENT_API_KEY=<your_gemini_api_key_2>
+API_GUESSING_MODELKEY=<your_gemini_api_key_3>
 ```
 
 ### 2. Test Production System
