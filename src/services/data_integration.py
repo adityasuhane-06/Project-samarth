@@ -14,11 +14,13 @@ class DataGovIntegration:
     DAILY_RAINFALL_RESOURCE_ID = "6c05cd1b-ed59-40c2-bc31-e314f39c6971"
     HISTORICAL_RAINFALL_RESOURCE_ID = "440dbca7-86ce-4bf6-b1af-83af2855757e"
     APEDA_URL = "https://agriexchange.apeda.gov.in/Production/IndiaCat/GetIndiaProductionCatObject"
+    APEDA_PRODUCT_URL = "https://agriexchange.apeda.gov.in/Production/IndiaCat/GetIndiaProductionCatProduct"
     
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or settings.DATA_GOV_API_KEY
         self.session = requests.Session()
         self.use_real_api = settings.USE_REAL_API
+        self._product_codes_cache = None  # Cache for product codes
         
     def fetch_crop_production_data(self) -> pd.DataFrame:
         """Fetch crop production dataset - tries real API first, falls back to sample data"""
@@ -135,6 +137,129 @@ class DataGovIntegration:
             {'State': 'Maharashtra', 'Year': 2022, 'Annual_Rainfall': 1124.5, 'Monsoon_Rainfall': 945.8},
             {'State': 'Maharashtra', 'Year': 2021, 'Annual_Rainfall': 1098.3, 'Monsoon_Rainfall': 918.7},
         ]
+    
+    def fetch_product_codes(self, category: str = "Agri") -> dict:
+        """Fetch product codes from APEDA API
+        
+        Args:
+            category: One of ['Agri', 'Fruits', 'Vegetables', 'Spices', 'Plantations', 'Floriculture', 'LiveStock']
+            
+        Returns:
+            Dictionary mapping product_code to product_name
+        """
+        # Return cached data if available
+        if self._product_codes_cache is not None:
+            return self._product_codes_cache
+        
+        all_categories = ['Agri', 'Fruits', 'Vegetables', 'Spices', 'Plantations', 'Floriculture', 'LiveStock']
+        all_products = {}
+        
+        try:
+            for cat in all_categories:
+                print(f"DEBUG: Fetching product codes for category: {cat}")
+                response = self.session.post(
+                    self.APEDA_PRODUCT_URL,
+                    json={"Category": cat},
+                    headers={"Content-Type": "application/json"},
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if isinstance(data, list):
+                        for item in data:
+                            code = item.get('product_code')
+                            name = item.get('product_name')
+                            if code and name:
+                                all_products[code] = {
+                                    'name': name.strip(),
+                                    'category': cat
+                                }
+                        print(f"DEBUG: Fetched {len(data)} products for {cat}")
+            
+            # Cache the results
+            self._product_codes_cache = all_products
+            print(f"DEBUG: Total {len(all_products)} product codes cached")
+            return all_products
+            
+        except Exception as e:
+            print(f"DEBUG: Error fetching product codes: {e}")
+            import traceback
+            traceback.print_exc()
+            return {}
+    
+    def find_product_code(self, crop_name: str) -> Optional[str]:
+        """Find product code for a crop name using fuzzy matching
+        
+        Args:
+            crop_name: Name of the crop (e.g., 'rice', 'wheat', 'mango')
+            
+        Returns:
+            Product code if found, None otherwise
+        """
+        if not crop_name:
+            return None
+        
+        # Get all product codes
+        products = self.fetch_product_codes()
+        if not products:
+            return None
+        
+        crop_name_lower = crop_name.lower().strip()
+        
+        # Direct match
+        for code, info in products.items():
+            if info['name'].lower() == crop_name_lower:
+                print(f"DEBUG: Found exact match for '{crop_name}': {code} ({info['name']})")
+                return code
+        
+        # Partial match (crop name in product name or vice versa)
+        for code, info in products.items():
+            product_name_lower = info['name'].lower()
+            if crop_name_lower in product_name_lower or product_name_lower in crop_name_lower:
+                print(f"DEBUG: Found partial match for '{crop_name}': {code} ({info['name']})")
+                return code
+        
+        # Common aliases
+        aliases = {
+            'paddy': 'rice',
+            'basmati': 'rice',
+            'cotton': 'cotton',
+            'maize': 'maize',
+            'corn': 'maize',
+            'jowar': 'jowar',
+            'sorghum': 'jowar',
+            'bajra': 'bajra',
+            'pearl millet': 'bajra',
+            'gram': 'gram',
+            'chickpea': 'gram',
+            'chana': 'gram',
+            'arhar': 'tur (arhar)',
+            'tur': 'tur (arhar)',
+            'pigeon pea': 'tur (arhar)',
+            'masur': 'lentil (masur)',
+            'lentil': 'lentil (masur)',
+            'groundnut': 'groundnut',
+            'peanut': 'groundnut',
+            'rapeseed': 'rapeseed & mustard',
+            'mustard': 'rapeseed & mustard',
+            'sarson': 'rapeseed & mustard',
+            'soybean': 'soyabean',
+            'sugarcane': 'sugarcane',
+            'sunflower': 'sunflower',
+            'tobacco': 'tobacco'
+        }
+        
+        # Try alias matching
+        alias_name = aliases.get(crop_name_lower)
+        if alias_name:
+            for code, info in products.items():
+                if info['name'].lower() == alias_name or alias_name in info['name'].lower():
+                    print(f"DEBUG: Found alias match for '{crop_name}' -> '{alias_name}': {code} ({info['name']})")
+                    return code
+        
+        print(f"DEBUG: No product code found for '{crop_name}'")
+        return None
     
     def fetch_apeda_data(self, fin_year: str, category: str = "All", 
                         product_code: str = "All", report_type: str = "1") -> pd.DataFrame:

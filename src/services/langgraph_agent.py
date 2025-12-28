@@ -61,38 +61,82 @@ data_service = DataGovIntegration()
 
 
 @tool
-def fetch_apeda_production(state: str = None, year: str = None, category: str = "Agri") -> dict:
+def fetch_apeda_production(state: str = None, year: str = None, commodity: str = None, category: str = "Agri") -> dict:
     """
     Fetch agricultural production data from APEDA (2019-2024).
     Use for recent state-level crop, fruit, vegetable, livestock production.
     
     Args:
-        state: Indian state name (e.g., "Punjab", "Maharashtra")
+        state: Indian state name (e.g., "Punjab", "Maharashtra") or "All India"
         year: Year like "2023" or "2023-24"
+        commodity: Crop/commodity name (e.g., "rice", "wheat", "mango")
         category: One of Agri, Fruits, Vegetables, Spices, LiveStock, Floriculture
     """
     try:
+        # Convert year format if needed
+        if year and "-" not in year:
+            year_int = int(year)
+            year = f"{year_int}-{str(year_int + 1)[-2:]}"  # 2023 -> 2023-24
+        
+        # Find product code for the commodity
+        product_code = "All"
+        if commodity:
+            product_code_found = data_service.find_product_code(commodity)
+            if product_code_found:
+                product_code = product_code_found
+                print(f"DEBUG: Found product code {product_code} for commodity '{commodity}'")
+            else:
+                print(f"DEBUG: No product code found for '{commodity}', using 'All'")
+        
         # Fetch from real APEDA API
-        result = data_service.fetch_apeda_data(state or "All", year or "2023-24", category)
-        if result and len(result) > 0:
+        df = data_service.fetch_apeda_data(
+            fin_year=year or "2023-24",
+            category=category,
+            product_code=product_code,
+            report_type="1"
+        )
+        
+        if df is not None and len(df) > 0:
+            # Filter by state if specified
+            if state and state.lower() != "all" and state.lower() != "all india":
+                df_filtered = df[df['State'].str.contains(state, case=False, na=False)]
+                if len(df_filtered) == 0:
+                    return {
+                        "source": "APEDA India",
+                        "status": "not_found",
+                        "message": f"No data found for state '{state}' in {year or '2023-24'}",
+                        "available_states": df['State'].tolist()[:10] if 'State' in df.columns else []
+                    }
+                df = df_filtered
+            
+            # Convert DataFrame to dict for JSON serialization
+            records = df.to_dict('records')[:15]  # Limit to 15 records
+            
             return {
                 "source": "APEDA India",
                 "years_available": "2019-2024",
-                "data": result[:10],  # Limit to 10 records
-                "note": f"APEDA production data for {category} in {state or 'All India'}"
+                "commodity": commodity or "All",
+                "product_code": product_code,
+                "category": category,
+                "year": year or "2023-24",
+                "data": records,
+                "total_records": len(df),
+                "note": f"APEDA production data for {commodity or category} in {state or 'All India'}"
             }
     except Exception as e:
         print(f"DEBUG: APEDA API error: {e}")
+        import traceback
+        traceback.print_exc()
     
     # Fallback to sample data
     return {
-        "source": "APEDA India (sample)",
+        "source": "APEDA India (sample - API unavailable)",
         "years_available": "2019-2024",
         "data": [
-            {"state": state or "All India", "category": category, "year": year or "2023-24", 
-             "production_tonnes": 125000, "export_value_usd": 45000000}
+            {"State": state or "All India", "Category": category, "Financial_Year": year or "2023-24", 
+             "Production": 125000, "Percent_Share": 10.0}
         ],
-        "note": f"APEDA production data for {category} in {state or 'All India'}"
+        "note": f"Sample APEDA production data for {commodity or category} in {state or 'All India'}"
     }
 
 
@@ -243,6 +287,8 @@ def create_agent_node(tools: list):
 
 Available tools:
 1. fetch_apeda_production - For state-level production data (2019-2024) - USE FOR Indian state production queries
+   - ALWAYS provide the commodity parameter for specific crop queries (e.g., commodity="rice", commodity="wheat")
+   - The system will automatically find the correct product code
 2. fetch_crop_production - For district-level crop data (2013-2015) - USE FOR district-level data
 3. fetch_rainfall_data - For historical (1901-2015) or recent (2019-2024) rainfall
 4. search_knowledge_base - For general agricultural knowledge from our database
@@ -252,13 +298,14 @@ CRITICAL RULES:
 1. You MUST call at least one tool before answering ANY agricultural question
 2. For years 2025 or later: Use web_search (our database only goes up to 2024)
 3. For "current", "latest", "recent" queries: Use web_search
-4. For India production data (2019-2024): Use fetch_apeda_production with state_name and year
+4. For India production data (2019-2024): Use fetch_apeda_production with state, year, AND commodity
 5. For district data: Use fetch_crop_production
 6. For general knowledge: Use search_knowledge_base
 7. NEVER answer without calling a tool first
 
 Examples:
-- "rice production in India 2023" → Call fetch_apeda_production(state_name="All India", year="2023-24", commodity="Basmati Rice")
+- "rice production in India 2023" → Call fetch_apeda_production(state="All India", year="2023", commodity="rice")
+- "wheat in Punjab 2024" → Call fetch_apeda_production(state="Punjab", year="2024", commodity="wheat")
 - "rice in Punjab 2025" → Call web_search(query="rice production Punjab India 2025")
 - "what is MSP" → Call search_knowledge_base(query="MSP minimum support price")""")
         
