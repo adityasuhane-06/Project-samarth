@@ -1,4 +1,6 @@
 # Contributing to Project Samarth
+**Version**: 3.0  
+**Last Updated**: January 2, 2026
 
 Thank you for your interest in contributing to Project Samarth! This document provides guidelines and instructions for contributing.
 
@@ -95,10 +97,75 @@ src/
 ├── models/         # Pydantic models
 ├── database/       # Database operations
 ├── services/       # Business logic
-│   ├── ai_models.py           # AI model interactions
-│   ├── data_integration.py    # External API integration
-│   └── query_engine.py        # Query processing
+│   ├── langgraph_agent.py  # LangGraph agentic workflow (PRIMARY)
+│   ├── rag_service.py      # RAG with ChromaDB
+│   ├── ai_models.py        # Two-model fallback
+│   ├── data_integration.py # External API integration
+│   └── query_engine.py     # Query processing
 └── api/            # API endpoints
+```
+
+### Adding a New LangGraph Tool
+
+1. Add tool function in `services/langgraph_agent.py`:
+```python
+def new_tool(state: AgentState) -> AgentState:
+    """
+    Tool description for the agent.
+    
+    Args:
+        state: Current agent state
+        
+    Returns:
+        Updated agent state with tool results
+    """
+    # Implement tool logic
+    result = perform_task(state['question'])
+    
+    # Update state
+    state['context'].append(result)
+    state['sources'].append({"tool": "new_tool", "data": result})
+    
+    return state
+```
+
+2. Register tool in workflow graph:
+```python
+# In create_agent_graph()
+workflow.add_node("new_tool", new_tool)
+```
+
+3. Update tool descriptions for agent:
+```python
+tools = [
+    # ... existing tools
+    {
+        "name": "new_tool",
+        "description": "Description of what this tool does"
+    }
+]
+```
+
+### Adding Documents to RAG
+
+1. Add documents in `services/rag_service.py`:
+```python
+AGRICULTURAL_KNOWLEDGE = [
+    # ... existing documents
+    {
+        "topic": "New Topic",
+        "content": "Detailed information about the topic..."
+    }
+]
+```
+
+2. Vector store auto-updates on service restart
+
+3. Test semantic search:
+```bash
+curl -X POST http://localhost:8000/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What is the new topic?"}'
 ```
 
 ### Adding a New Data Source
@@ -152,10 +219,24 @@ python test/test_system.py
 
 # Test imports
 cd src
-python -c "from config import settings; from models import QueryRequest; from services import QueryRouter; print('✅ All imports OK')"
+python -c "from config import settings; from models import QueryRequest; from services.langgraph_agent import LangGraphAgent; print('✅ All imports OK')"
+
+# Test LangGraph agent
+curl -X POST http://localhost:8000/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What are rabi crops?"}'
+
+# Test RAG
+curl -X POST http://localhost:8000/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What is crop rotation?"}'
+
+# Test fallback
+# (Temporarily disable LangGraph to test two-model fallback)
 
 # Test API endpoints
 curl http://localhost:8000/api/health
+curl http://localhost:8000/api/cache/stats
 ```
 
 ### Documentation
@@ -296,6 +377,9 @@ Any other context or screenshots.
 ## 📚 Resources
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [LangChain Documentation](https://python.langchain.com/docs/get_started/introduction)
+- [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
+- [ChromaDB Documentation](https://docs.trychroma.com/)
 - [MongoDB Documentation](https://www.mongodb.com/docs/)
 - [Google Gemini AI](https://ai.google.dev/)
 - [PEP 8 Style Guide](https://pep8.org/)

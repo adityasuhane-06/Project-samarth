@@ -1,4 +1,7 @@
 # 🚀 Quick Reference - Project Samarth
+**Last Updated**: January 2, 2026  
+**Version**: 3.0  
+**Architecture**: LangGraph + RAG + Two-Model Fallback
 
 ## 📁 Project Structure
 
@@ -10,6 +13,11 @@ project-samarth/
 │   ├── models/             # API models
 │   ├── database/           # MongoDB
 │   ├── services/           # AI + Data
+│   │   ├── langgraph_agent.py  # LangGraph (PRIMARY)
+│   │   ├── rag_service.py      # RAG with ChromaDB
+│   │   ├── ai_models.py        # Two-model fallback
+│   │   ├── data_integration.py
+│   │   └── query_engine.py
 │   └── api/                # Endpoints
 │
 ├── frontend/               # Frontend (React/Vite)
@@ -38,18 +46,19 @@ cp .env.example .env         # Edit with your API keys
 python app_modular.py
 ```
 
-### Frontend (Port 3000)
+### Frontend (Port 5173)
 ```bash
 cd frontend
 npm install
-cp .env.example .env
-npm run dev
+npm run dev                  # Vite dev server
 ```
 
 ### Access
-- 🌐 **Frontend**: http://localhost:3000
+- 🌐 **Frontend**: http://localhost:5173
 - 🔌 **Backend API**: http://localhost:8000
 - 📚 **API Docs**: http://localhost:8000/docs
+- 🚀 **Production Backend**: https://project-samarth-gxou.onrender.com
+- ✨ **Production Frontend**: https://project-samarth-frontend.vercel.app
 
 ---
 
@@ -60,9 +69,15 @@ npm run dev
 # Gemini AI (https://aistudio.google.com/app/apikey)
 SECRET_KEY=your_gemini_key_here
 API_GUESSING_MODELKEY=your_second_gemini_key_here
+AGENT_API_KEY=your_third_gemini_key_here
 
 # MongoDB Atlas (https://www.mongodb.com/cloud/atlas)
 DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/agri_qa_cache
+
+# ChromaDB Cloud (optional - local works too)
+CHROMA_API_KEY=your_chroma_api_key
+CHROMA_TENANT=your_tenant
+CHROMA_DATABASE=Project Samarth
 
 # Data.gov.in API (Get from https://data.gov.in/catalogs)
 DATA_GOV_API_KEY=your_data_gov_api_key_here
@@ -79,18 +94,21 @@ VITE_API_URL=http://localhost:8000
 ## 🎯 Key Features
 
 ### Backend
-- ✅ **Two-Model AI** - QueryRouter + QueryProcessor
-- ✅ **MongoDB Caching** - 135x performance boost
+- ✅ **LangGraph Agent (Primary)** - Autonomous reasoning with 5 tools
+- ✅ **RAG with ChromaDB** - 100+ agricultural documents
+- ✅ **Two-Model Fallback** - Reliability through redundancy
+- ✅ **MongoDB Caching** - 30-40x performance boost
 - ✅ **5 Data Sources** - 1901-2024 coverage
 - ✅ **8 REST APIs** - Complete CRUD operations
-- ✅ **Modular Design** - 8 clean modules
+- ✅ **Modular Design** - 10+ clean modules
 
 ### Frontend
 - ✅ **React 18** - Modern hooks
-- ✅ **Vite** - Lightning-fast builds
-- ✅ **Tailwind CSS** - Beautiful UI
+- ✅ **Vite 5** - Lightning-fast builds
+- ✅ **Tailwind CSS 3** - Beautiful UI
 - ✅ **9 Components** - Fully modular
 - ✅ **Responsive** - Mobile-friendly
+- ✅ **Deployed on Vercel** - Global CDN
 
 ---
 
@@ -135,9 +153,18 @@ Open browser to http://localhost:3000 and try sample questions!
 
 ### Backend Flow
 ```
-User Query → Cache Check → Router AI → Data Fetch → Processor AI → Cache Store → Response
-   (0.1s)      (STEP 0)    (STEP 1)     (STEP 2)      (STEP 3)      (STEP 4)    (135x faster!)
+User Query → Cache Check → LangGraph Agent (5 tools) → Cache Store → Response
+   (100ms)      (STEP 0)    (STEP 1 - PRIMARY)            (STEP 2)    (30-40x faster!)
+   
+   If LangGraph fails → Two-Model Fallback (Router → Fetch → Processor)
 ```
+
+### LangGraph Tools
+1. **fetch_apeda_production** - APEDA data (2019-2024)
+2. **fetch_crop_production** - District data (2013-2015)
+3. **fetch_rainfall_data** - Rainfall patterns
+4. **search_knowledge_base** - RAG with 100+ docs
+5. **web_search** - Google Search API
 
 ### Frontend Components
 ```
@@ -267,10 +294,12 @@ git push -u origin main
 ## ✅ Pre-Demo Checklist
 
 - [ ] Backend running (port 8000)
-- [ ] Frontend running (port 3000)
+- [ ] Frontend running (port 5173)
 - [ ] MongoDB connected
+- [ ] LangGraph agent loaded
+- [ ] RAG knowledge base initialized
 - [ ] Sample query works
-- [ ] Cache hit demonstrated (135x faster!)
+- [ ] Cache hit demonstrated (30-40x faster!)
 - [ ] GitHub repo updated
 - [ ] Documentation complete
 - [ ] .env files configured (NOT committed!)
@@ -280,9 +309,11 @@ git push -u origin main
 ## 🔗 Useful Links
 
 - Backend: http://localhost:8000
-- Frontend: http://localhost:3000
+- Frontend: http://localhost:5173
 - API Docs: http://localhost:8000/docs
-- GitHub: https://github.com/YOUR_USERNAME/project-samarth
+- Production Backend: https://project-samarth-gxou.onrender.com
+- Production Frontend: https://project-samarth-frontend.vercel.app
+- GitHub: https://github.com/adityasuhane-06/Project-samarth
 
 ---
 
@@ -290,6 +321,12 @@ git push -u origin main
 
 1. **Backend**: `cd src && python app_modular.py`
 2. **Frontend**: `cd frontend && npm run dev`
-3. **Browser**: Open http://localhost:3000
+3. **Browser**: Open http://localhost:5173
 
 **That's it! 🎉**
+
+---
+
+**Last Updated**: January 2, 2026  
+**Version**: 3.0  
+**Status**: Production Ready (Render + Vercel)

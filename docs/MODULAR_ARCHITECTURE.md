@@ -1,12 +1,14 @@
 # 🏗️ Modular Architecture - Complete Guide
+**Last Updated**: January 2, 2026  
+**Version**: 3.0
 
 ## 📋 Overview
 
-Project Samarth has been refactored from a monolithic 2000+ line file into a clean, professional, modular architecture with **100% feature parity**.
+Project Samarth features a professional, modular architecture with **LangGraph agentic workflow**, **RAG with ChromaDB**, and **two-model fallback** for maximum reliability.
 
 ## ✨ Why Modular Architecture?
 
-### Before (app.py)
+### Before (app.py - Legacy)
 ```
 app.py (2000+ lines)
 ├── Configuration
@@ -20,22 +22,28 @@ app.py (2000+ lines)
 ❌ Hard to navigate  
 ❌ Difficult to maintain  
 ❌ Testing is complex  
-❌ Team collaboration difficult  
+❌ No separation of concerns  
 
-### After (app_modular.py)
+### After (app_modular.py - Current)
 ```
 src/
 ├── app_modular.py (105 lines)
 ├── config/ (67 lines)
 ├── models/ (38 lines)
 ├── database/ (188 lines)
-├── services/ (769 lines)
+├── services/ (1200+ lines)
+│   ├── langgraph_agent.py (PRIMARY)
+│   ├── rag_service.py (RAG)
+│   ├── ai_models.py (Fallback)
+│   ├── data_integration.py
+│   └── query_engine.py
 └── api/ (161 lines)
 ```
 ✅ Easy to find code  
 ✅ Simple to maintain  
 ✅ Each module testable  
 ✅ Multiple devs can work simultaneously  
+✅ Clear separation of concerns  
 
 ## 📁 Module Structure
 
@@ -121,7 +129,65 @@ class MongoDBCache:
 ### 4. services/ - Business Logic Module
 **Purpose:** Core business logic and data processing
 
-#### 4a. ai_models.py (169 lines)
+#### 4a. langgraph_agent.py (PRIMARY ARCHITECTURE)
+**LangGraph Agentic Workflow:**
+
+```python
+class AgentState(TypedDict):
+    """State maintained across agent execution"""
+    question: str
+    steps: List[str]
+    context: List[str]
+    answer: str
+    sources: List[Dict]
+
+class LangGraphAgent:
+    """Primary AI agent with autonomous tool selection"""
+    def __init__(self, api_key: str)
+    async def process_query(self, question: str) -> dict
+    
+    # 5 Tools:
+    def fetch_apeda_production(state: AgentState) -> AgentState
+    def fetch_crop_production(state: AgentState) -> AgentState
+    def fetch_rainfall_data(state: AgentState) -> AgentState
+    def search_knowledge_base(state: AgentState) -> AgentState
+    def web_search(state: AgentState) -> AgentState
+```
+
+**Features:**
+- Autonomous multi-step reasoning
+- State machine with conditional routing
+- Tool selection based on query analysis
+- Context accumulation across steps
+- Automatic source tracking
+
+#### 4b. rag_service.py (KNOWLEDGE BASE)
+**RAG with ChromaDB:**
+
+```python
+class RAGService:
+    """Retrieval Augmented Generation"""
+    def __init__(self)
+    def initialize_vector_store()
+    def search(query: str, top_k: int = 3) -> List[str]
+    
+    # 100+ Documents:
+    AGRICULTURAL_KNOWLEDGE = [
+        {"topic": "Rabi Crops", "content": "..."},
+        {"topic": "Kharif Crops", "content": "..."},
+        {"topic": "Crop Rotation", "content": "..."},
+        # ... 100+ more documents
+    ]
+```
+
+**Features:**
+- 100+ agricultural knowledge documents
+- ChromaDB for vector storage (local or cloud)
+- HuggingFace sentence-transformers embeddings
+- Semantic search with similarity scoring
+- Answers "What is..." questions
+
+#### 4c. ai_models.py (FALLBACK ARCHITECTURE)
 **Two-Model Architecture:**
 
 ```python
@@ -234,36 +300,52 @@ def get_query_engine() -> DataQueryEngine
 1. Request → api/routes.py
               ↓
 2. Check Cache → database/mongodb.py
-   ├─ HIT → Return cached (0.1s)
+   ├─ HIT → Return cached (100ms)
    └─ MISS → Continue
               ↓
-3. Route Query → services/ai_models.py (QueryRouter)
+3. LangGraph Agent → services/langgraph_agent.py (PRIMARY)
+   ├─ Step 1: Analyze Query
+   ├─ Step 2: Select Tools
+   ├─ Step 3: Execute Tools
+   │   ├─ fetch_apeda_production
+   │   ├─ fetch_crop_production
+   │   ├─ fetch_rainfall_data
+   │   ├─ search_knowledge_base (RAG)
+   │   └─ web_search
+   ├─ Step 4: Accumulate Context
+   └─ Step 5: Generate Answer
               ↓
-4. Fetch Data → services/query_engine.py
+4. On LangGraph Failure → Two-Model Fallback
+   ├─ Route Query → services/ai_models.py (QueryRouter)
+   ├─ Fetch Data → services/query_engine.py
+   │              → services/data_integration.py
+   └─ Generate Answer → services/ai_models.py (QueryProcessor)
               ↓
-              → services/data_integration.py
+5. Cache Response → database/mongodb.py
               ↓
-5. Generate Answer → services/ai_models.py (QueryProcessor)
-              ↓
-6. Cache Response → database/mongodb.py
-              ↓
-7. Return Response → api/routes.py
+6. Return Response → api/routes.py
 ```
 
-## 🎯 Feature Parity Verification
+## 🎯 Feature Parity & Enhancements
 
-| Feature | app.py | app_modular.py |
-|---------|--------|----------------|
-| Two-Model Architecture | ✅ | ✅ |
+| Feature | Legacy (app.py) | Current (app_modular.py) |
+|---------|--------|----------------||
+| Two-Model Architecture | ✅ | ✅ (Fallback) |
 | MongoDB Caching | ✅ | ✅ |
 | Query Engine (5 sources) | ✅ | ✅ |
 | All 8 API Endpoints | ✅ | ✅ |
-| Performance (135x) | ✅ | ✅ |
+| Performance (30-40x) | ✅ | ✅ |
 | TTL Management | ✅ | ✅ |
 | Hit Tracking | ✅ | ✅ |
 | Cache Statistics | ✅ | ✅ |
+| **LangGraph Agent** | ❌ | ✅ **NEW** |
+| **RAG Knowledge Base** | ❌ | ✅ **NEW** |
+| **Agentic Workflow** | ❌ | ✅ **NEW** |
+| **Semantic Search** | ❌ | ✅ **NEW** |
+| **ChromaDB Integration** | ❌ | ✅ **NEW** |
+| **5 Autonomous Tools** | ❌ | ✅ **NEW** |
 
-**Result:** 100% Feature Parity ✅
+**Result:** 100% Feature Parity + 6 Major Enhancements ✅
 
 ## 🚀 Running the Application
 
@@ -341,11 +423,23 @@ curl -X POST http://localhost:8000/api/query \
 
 ## 🎓 Development Guidelines
 
+### Adding a New Tool to LangGraph
+1. Add tool function in `services/langgraph_agent.py`
+2. Update AgentState if needed
+3. Add tool to workflow graph
+4. Test with sample queries
+
+### Adding Documents to RAG
+1. Add to `AGRICULTURAL_KNOWLEDGE` list in `services/rag_service.py`
+2. Reinitialize vector store (automatic on startup)
+3. Test semantic search
+
 ### Adding a New Data Source
 1. Add integration in `services/data_integration.py`
 2. Add query method in `services/query_engine.py`
-3. Update routing logic in `services/ai_models.py`
-4. Test with sample queries
+3. Add as LangGraph tool in `services/langgraph_agent.py`
+4. Update fallback routing in `services/ai_models.py`
+5. Test with sample queries
 
 ### Adding a New API Endpoint
 1. Add route handler in `api/routes.py`
@@ -372,10 +466,22 @@ The modular architecture provides:
 - ✅ **Team-ready** - Multiple developers
 - ✅ **Professional** - Industry-standard structure
 - ✅ **100% Feature Parity** - All functionality preserved
+- ✅ **AI-Enhanced** - LangGraph + RAG + Fallback
+- ✅ **Production-Ready** - Deployed on Render + Vercel
 
-**Both versions work identically. The modular version is simply better organized!** 🎉
+**The modular version is better organized and more capable!** 🎉
+
+---
+
+**System Status**: ✅ **PRODUCTION READY**  
+**Architecture**: 🤖 **LangGraph + RAG + Two-Model Fallback**  
+**Performance**: ⚡ **30-40x FASTER with caching**  
+
+**Last Updated**: January 2, 2026  
+**Version**: 3.0
 
 ---
 
 *For detailed comparison, see [COMPARISON_REPORT.md](COMPARISON_REPORT.md)*  
-*For architecture details, see [MODULE_README.md](../src/MODULE_README.md)*
+*For architecture details, see [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md)*  
+*For API documentation, see [MODULE_README.md](../src/MODULE_README.md)*

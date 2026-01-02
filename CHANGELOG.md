@@ -5,6 +5,161 @@ All notable changes to Project Samarth will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+---
+
+## [3.0.0] - 2026-01-02
+
+### 🎉 Major Release - LangGraph Agentic Architecture
+
+#### Added - LangGraph Agent System
+
+- **LangGraph Agentic Workflow** (`services/langgraph_agent.py`)
+  - Autonomous multi-step reasoning with state machine
+  - 5 autonomous tools with conditional routing
+  - AgentState TypedDict for state management
+  - Multi-tool orchestration in single query
+  - Intelligent tool selection based on query analysis
+
+- **5 Agent Tools**
+  - `fetch_apeda_production` - APEDA data (2019-2024)
+  - `fetch_crop_production` - District data (2013-2015)
+  - `fetch_rainfall_data` - Rainfall patterns
+  - `search_knowledge_base` - RAG semantic search
+  - `web_search` - Google Custom Search integration
+
+#### Added - RAG System
+
+- **RAG Service** (`services/rag_service.py`)
+  - ChromaDB vector database integration (cloud & local)
+  - HuggingFace sentence-transformers embeddings (local, free)
+  - 100+ agricultural knowledge documents
+  - Semantic search with similarity scoring
+  - Answers agricultural concept questions
+
+- **Knowledge Base Documents**
+  - Crop types (Rabi, Kharif, Zaid)
+  - Agricultural practices
+  - Crop grading standards
+  - Government schemes
+  - Regional crop information
+
+#### Added - Enhanced Features
+
+- **Three API Keys System**
+  - AGENT_API_KEY - LangGraph agent (primary)
+  - API_GUESSING_MODELKEY - QueryRouter (fallback)
+  - SECRET_KEY - QueryProcessor (fallback)
+  - Optimal rate limiting distribution
+
+- **Web Search Integration**
+  - Google Custom Search API
+  - Real-time information retrieval
+  - Handles current/future queries (2025+)
+
+- **Force-Routing Logic**
+  - 2025+/current → force web search
+  - 2019-2024 → force APEDA database
+  - General knowledge → force RAG search
+  - Eliminates hallucinations
+
+#### Changed - Architecture Updates
+
+- **Two-Model System → Fallback**
+  - QueryRouter now fallback only
+  - QueryProcessor now fallback only
+  - Activates when LangGraph unavailable
+  - Maintains reliability
+
+- **Performance Improvements**
+  - Cache hit: 100ms (unchanged)
+  - Cache miss with LangGraph: 3-5 seconds (vs 13-30s)
+  - 6-10x faster query processing
+  - Still 30-40x with cache
+
+- **Frontend Updates**
+  - React 18 + Vite 5 + Tailwind CSS 3
+  - 9 modular components
+  - Live server statistics
+  - Rich answer formatting
+  - Deployed on Vercel
+
+#### Added - Deployment
+
+- **Production Deployment**
+  - Backend: Render (https://project-samarth-gxou.onrender.com)
+  - Frontend: Vercel (https://project-samarth-frontend.vercel.app)
+  - Auto-deploy from GitHub main branch
+  - Global CDN with HTTPS
+
+#### Fixed
+
+- MongoDB boolean evaluation errors (carried from v1.0)
+- Agent initialization race conditions
+- RAG embeddings loading on cold start
+- CORS configuration for Vercel deployments
+
+#### Documentation
+
+- Updated all docs to reflect LangGraph primary
+- Added LangGraph tool development guide
+- Updated architecture diagrams
+- Revised performance benchmarks
+- Complete deployment guide for v3.0
+
+#### Dependencies Added
+
+```
+langchain==0.1.0
+langchain-google-genai==0.0.5
+langgraph==0.0.20
+chromadb==0.4.22
+sentence-transformers==2.2.2
+```
+
+#### Migration from v2.0 to v3.0
+
+- Same `.env` file works (add 3rd API key + ChromaDB vars)
+- Same API endpoints (100% backward compatible)
+- LangGraph automatically used when available
+- Falls back to two-model if LangGraph fails
+- No client code changes required
+
+---
+
+## [2.0.0] - 2025-11-15
+
+### 🏗️ Modular Architecture Release
+
+#### Changed - Code Organization
+
+- **Modularized Codebase**
+  - Split monolithic app.py (~2000 lines) into 8 modules (~1300 lines)
+  - Clean separation of concerns
+  - Easier maintenance and testing
+  - Team-ready development
+
+- **Module Structure**
+  - `config/` - Configuration management
+  - `models/` - Pydantic API models
+  - `database/` - MongoDB operations
+  - `services/` - Business logic (AI, data, queries)
+  - `api/` - API route handlers
+
+#### Added
+
+- Development documentation in MODULE_README.md
+- Module-specific import paths
+- Comprehensive comparison report
+
+#### Maintained
+
+- 100% feature parity with v1.0
+- All API endpoints unchanged
+- Same performance characteristics
+- Identical functionality
+
+---
+
 ## [1.0.0] - 2025-11-01
 
 ### 🎉 Initial Release
@@ -154,32 +309,30 @@ pydantic==2.5.0
 
 ## [Unreleased]
 
-### Planned Features
+### Planned Features (v4.0)
 
-- [ ] User authentication and authorization
-- [ ] Rate limiting per user
-- [ ] GraphQL API
-- [ ] WebSocket support for real-time updates
-- [ ] React/Vue.js frontend
-- [ ] More data sources (soil, weather, market prices)
-- [ ] ML-based predictions
+- [ ] More LangGraph tools (market prices, weather forecasts, soil data)
+- [ ] Expand RAG knowledge base to 500+ documents
 - [ ] Multi-language support (Hindi, regional languages)
+- [ ] Streaming responses for real-time agent reasoning
+- [ ] User authentication and query history
+- [ ] Advanced visualizations and charts
 - [ ] Export data in multiple formats (CSV, Excel, PDF)
-- [ ] Visualization dashboards
-- [ ] Email notifications for cached query expiry
+- [ ] Email notifications and subscriptions
+- [ ] Mobile app (React Native)
 
 ### Under Consideration
 
 - [ ] PostgreSQL support as alternative to MongoDB
-- [ ] Redis caching layer for faster responses
+- [ ] Redis caching layer for hot queries
 - [ ] Elasticsearch integration for full-text search
 - [ ] Kubernetes deployment configurations
-- [ ] Docker Compose for local development
-- [ ] CI/CD pipeline with GitHub Actions
-- [ ] Automated testing with pytest
-- [ ] Code coverage reporting
+- [ ] GraphQL API alongside REST
+- [ ] WebSocket support for real-time updates
+- [ ] Admin dashboard for monitoring
+- [ ] A/B testing framework
 - [ ] API versioning (v2)
-- [ ] Admin dashboard
+- [ ] Custom LangGraph workflows per user
 
 ---
 
@@ -187,21 +340,49 @@ pydantic==2.5.0
 
 ### Version Numbering
 
-- **Major** (X.0.0): Breaking changes, major feature additions
-- **Minor** (1.X.0): New features, backward compatible
-- **Patch** (1.0.X): Bug fixes, minor improvements
+- **Major** (X.0.0): Breaking changes, major feature additions (v1.0 → v2.0 → v3.0)
+- **Minor** (3.X.0): New features, backward compatible
+- **Patch** (3.0.X): Bug fixes, minor improvements
 
 ### Release Schedule
 
-- **Major releases**: Quarterly
+- **Major releases**: Quarterly (Q4 2025: v1.0, Q4 2025: v2.0, Q1 2026: v3.0)
 - **Minor releases**: Monthly
 - **Patch releases**: As needed
 
 ---
 
-## Migration Guide
+## Migration Guides
 
-### From Monolithic to Modular
+### From v2.0 to v3.0 (LangGraph)
+
+If you're upgrading from modular two-model (v2.0) to LangGraph (v3.0):
+
+1. **Update dependencies**:
+   ```bash
+   pip install -r src/requirements.txt
+   ```
+
+2. **Add new environment variables**:
+   ```env
+   # Add 3rd Gemini key
+   AGENT_API_KEY=your_third_gemini_key
+   
+   # Add ChromaDB (optional - local works)
+   CHROMA_API_KEY=your_chroma_key
+   CHROMA_TENANT=your_tenant
+   CHROMA_DATABASE=Project Samarth
+   
+   # Add Google Search (optional)
+   GOOGLE_SEARCH_API_KEY=your_google_key
+   GOOGLE_SEARCH_CX=your_search_engine_id
+   ```
+
+3. **No code changes required** - 100% API compatibility
+4. **Same run command**: `python app_modular.py`
+5. **LangGraph automatically used** - falls back to two-model if unavailable
+
+### From v1.0 to v2.0 (Modular)
 
 If you're upgrading from the monolithic `app.py` to the modular `app_modular.py`:
 
@@ -223,9 +404,15 @@ If you're upgrading from the monolithic `app.py` to the modular `app_modular.py`
 
 For questions or issues:
 - Check [documentation](docs/INDEX.md)
-- Open [GitHub Issue](https://github.com/yourusername/project-samarth/issues)
+- Open [GitHub Issue](https://github.com/adityasuhane-06/Project-samarth/issues)
 - Review [FAQ](docs/QUICKSTART.md#troubleshooting)
+- Read [Architecture Guide](docs/ARCHITECTURE.md)
 
 ---
 
-**Note**: This is the initial release. We welcome your feedback and contributions!
+**Current Version**: 3.0.0  
+**Release Date**: January 2, 2026  
+**Status**: Production Ready  
+**Architecture**: LangGraph + RAG + Two-Model Fallback
+
+**Note**: This project is actively maintained. We welcome your feedback and contributions!

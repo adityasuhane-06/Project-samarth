@@ -1,8 +1,13 @@
 # Deployment Guide - Project Samarth
+**Last Updated**: January 2, 2026  
+**Version**: 3.0  
+**Architecture**: LangGraph + RAG + Two-Model Fallback
 
 This guide covers deploying the Project Samarth application with a split architecture:
-- **Frontend (React + Vite)** → Vercel
-- **Backend (FastAPI + MongoDB)** → Render/Railway
+- **Frontend (React 18 + Vite 5 + Tailwind CSS)** → Vercel
+- **Backend (FastAPI + LangGraph + MongoDB)** → Render/Railway
+- **Vector DB (ChromaDB)** → Cloud or Local
+- **Database (MongoDB Atlas)** → Cloud
 
 ---
 
@@ -13,15 +18,17 @@ This guide covers deploying the Project Samarth application with a split archite
 │                 │  ───────────────► │                  │
 │  Vercel         │                   │  Render/Railway  │
 │  (Frontend)     │  ◄─────────────── │  (Backend API)   │
-│                 │      API Calls    │                  │
+│  React 18       │      API Calls    │  FastAPI         │
+│  Vite 5         │                   │  LangGraph Agent │
 └─────────────────┘                   └──────────────────┘
                                               │
-                                              │ Connection
-                                              ▼
-                                      ┌──────────────────┐
-                                      │  MongoDB Atlas   │
-                                      │  (Database)      │
-                                      └──────────────────┘
+                                    ┌─────────┼─────────┐
+                                    ▼         ▼         ▼
+                          ┌──────────────┐ ┌──────────┐ ┌──────────┐
+                          │  MongoDB     │ │ ChromaDB │ │ Google   │
+                          │  Atlas       │ │ (RAG)    │ │ APIs     │
+                          │  (Cache)     │ │          │ │          │
+                          └──────────────┘ └──────────┘ └──────────┘
 ```
 
 ---
@@ -37,20 +44,38 @@ This guide covers deploying the Project Samarth application with a split archite
 2. Connect your GitHub repository
 3. Configure:
    - **Name**: `project-samarth-backend`
-   - **Environment**: `Python 3`
+   - **Environment**: `Python 3.11`
    - **Region**: Choose closest to your users
-   - **Branch**: `master`
+   - **Branch**: `main`
    - **Root Directory**: `src`
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `python app.py`
+   - **Start Command**: `python app_modular.py`
 
 ### 1.3 Add Environment Variables
 Add these in Render dashboard:
 ```
-GEMINI_API_KEY=your_gemini_key
-GEMINI_API_KEY_2=your_gemini_key_2
-MONGODB_URI=your_mongodb_connection_string
+# Gemini AI Keys (3 keys for optimal rate limiting)
+SECRET_KEY=your_gemini_key_1
+API_GUESSING_MODELKEY=your_gemini_key_2
+AGENT_API_KEY=your_gemini_key_3
+
+# MongoDB Atlas
+DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/
+
+# ChromaDB (optional - local works too)
+CHROMA_API_KEY=your_chroma_api_key
+CHROMA_TENANT=your_tenant_id
+CHROMA_DATABASE=Project Samarth
+
+# Data.gov.in API
 DATA_GOV_API_KEY=your_data_gov_key
+USE_REAL_API=true
+
+# Google Custom Search (optional for web search tool)
+GOOGLE_SEARCH_API_KEY=your_google_api_key
+GOOGLE_SEARCH_CX=your_search_engine_id
+
+# Server Config
 ENVIRONMENT=production
 PORT=8000
 ```
@@ -103,15 +128,15 @@ https://project-samarth.vercel.app
 ## 🔧 Step 3: Update CORS Configuration
 
 ### 3.1 Update Backend CORS
-In `src/app.py`, update the CORS origins:
+In `src/app_modular.py`, update the CORS origins:
 
 ```python
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "https://project-samarth.vercel.app",  # Add your Vercel URL
-        "https://*.vercel.app"  # Allow all Vercel preview deployments
+        "http://localhost:5173",                    # Vite dev server
+        "https://project-samarth.vercel.app",       # Production frontend
+        "https://*.vercel.app"                      # Vercel preview deployments
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -140,8 +165,8 @@ Commit and push - Render will auto-redeploy.
 3. Select your repository
 4. Configure:
    - **Root Directory**: `src`
-   - **Start Command**: `python app.py`
-5. Add same environment variables as Render
+   - **Start Command**: `python app_modular.py`
+5. Add same environment variables as Render (all 3 Gemini keys, MongoDB, ChromaDB, etc.)
 6. Railway provides URL like: `https://project-samarth-production.up.railway.app`
 
 ---
@@ -151,8 +176,8 @@ Commit and push - Render will auto-redeploy.
 ### Push to GitHub (if needed)
 ```bash
 git add .
-git commit -m "feat: Add deployment configurations for Vercel and Render"
-git push origin master
+git commit -m "feat: Deploy v3.0 with LangGraph + RAG"
+git push origin main
 ```
 
 ### Deploy Frontend via CLI
@@ -163,7 +188,14 @@ vercel --prod
 
 ### Check Backend Health
 ```bash
-curl https://project-samarth-backend.onrender.com/api/health
+curl https://project-samarth-gxou.onrender.com/api/health
+```
+
+### Test LangGraph Agent
+```bash
+curl -X POST https://project-samarth-gxou.onrender.com/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What are rabi crops?"}'
 ```
 
 ---
@@ -173,17 +205,25 @@ curl https://project-samarth-backend.onrender.com/api/health
 ### Free Tier Limitations
 - **Render Free**: Backend sleeps after 15 min inactivity (first request takes 30-60s to wake)
 - **Vercel Free**: 100GB bandwidth/month, unlimited deployments
-- **MongoDB Atlas Free**: 512MB storage
+- **MongoDB Atlas Free**: 512MB storage (sufficient for caching)
+- **ChromaDB**: Can use local (free) or cloud (free tier available)
+- **Google Custom Search**: 100 queries/day free
 
 ### Environment Variables
 - ✅ Already configured in `.env.example`
 - ⚠️ Never commit `.env` files to Git
 - ✅ Set them in hosting dashboards
+- 🔑 Need 3 Gemini API keys for optimal rate limiting
 
 ### API Keys Security
 - All API keys should be set as environment variables
 - Frontend only needs `VITE_API_URL`
-- Backend needs all API keys (Gemini, MongoDB, Data.gov)
+- Backend needs:
+  - 3 Gemini API keys (agent + fallback)
+  - MongoDB connection string
+  - ChromaDB credentials (optional)
+  - Data.gov.in API key
+  - Google Custom Search API + CX (optional)
 
 ---
 
@@ -200,18 +240,33 @@ Both Vercel and Render support auto-deployment:
 
 ### Frontend can't connect to backend
 - Check `VITE_API_URL` in Vercel env vars
-- Verify CORS settings in backend
+- Verify CORS settings in backend (app_modular.py)
 - Check backend is running (visit `/api/health`)
+- Ensure URL doesn't have trailing slash
 
 ### Backend deployment fails
 - Check `requirements.txt` has all dependencies
-- Verify Python version (3.10+)
+- Verify Python version (3.11+ recommended)
 - Check build logs in Render dashboard
+- Ensure `app_modular.py` is the entry point
+
+### LangGraph agent not working
+- Verify AGENT_API_KEY is set
+- Check Render logs for error messages
+- Ensure Gemini API has sufficient quota
+- Test with fallback: agent falls back to two-model automatically
 
 ### MongoDB connection fails
 - Verify MongoDB Atlas allows connections from anywhere (0.0.0.0/0)
-- Check `MONGODB_URI` environment variable
+- Check `DATABASE_URL` environment variable format
 - Ensure database user has read/write permissions
+- Test connection with `mongosh` command
+
+### ChromaDB connection fails
+- Check if CHROMA_API_KEY and CHROMA_TENANT are set
+- Verify ChromaDB cloud account is active
+- System works without ChromaDB (RAG disabled gracefully)
+- Can use local ChromaDB instead of cloud
 
 ---
 
@@ -232,3 +287,16 @@ Your application is now live with:
 - 🔄 Automatic deployments on push
 - 📊 Performance analytics
 - 🌍 Production-ready infrastructure
+- 🤖 LangGraph agentic workflow
+- 📚 RAG knowledge base
+- 💾 MongoDB caching (30-40x faster)
+- 🔄 Graceful fallback to two-model
+
+**Production URLs:**
+- Frontend: https://project-samarth-frontend.vercel.app
+- Backend: https://project-samarth-gxou.onrender.com
+- API Docs: https://project-samarth-gxou.onrender.com/docs
+
+**Last Updated**: January 2, 2026  
+**Version**: 3.0  
+**Status**: Production Ready

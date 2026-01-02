@@ -1,103 +1,67 @@
-# APEDA Product Code Integration - Complete
+# APEDA Data Integration
 
-## 🎉 Successfully Implemented Automatic Product Code Matching
+## Overview
 
-### Problem Solved
-Previously, the system was returning **incorrect data** because APEDA API was being called without specific product codes:
-- **BEFORE**: "Punjab rice 2023-24: 125,000 tonnes" ❌ (aggregate agricultural production)
-- **AFTER**: "Punjab rice 2023-24: 14,356 thousand tonnes" ✅ (actual rice-specific data)
+APEDA (Agricultural and Processed Food Products Export Development Authority) provides state-level agricultural production data from 2019-2024.
 
-### Solution Overview
-Discovered APEDA's hidden product list API endpoint and integrated automatic product code matching into the system.
+**Source**: agriexchange.apeda.gov.in - Ministry of Commerce  
+**Coverage**: 2019-2024 (Financial Years)  
+**Granularity**: State-level aggregated data  
+**Categories**: Agri, Fruits, Vegetables, Spices, LiveStock, Plantations, Floriculture
 
 ---
 
-## Technical Implementation
+## Implementation
 
-### 1. **APEDA Product List API** (Discovery)
-```python
-# Discovered endpoint
-POST https://agriexchange.apeda.gov.in/Production/IndiaCat/GetIndiaProductionCatProduct
-Body: {"Category": "Agri"}  # or Fruits, Vegetables, Spices, LiveStock, Plantations, Floriculture
+### Automatic Product Code Resolution
 
-# Returns
-[
-  {'product_code': '1011', 'product_name': 'Rice', 'category': 'Agri'},
-  {'product_code': '1013', 'product_name': 'Wheat', 'category': 'Agri'},
-  {'product_code': '1050', 'product_name': 'Mango', 'category': 'Fruits'},
-  ... (113 total products across all categories)
-]
-```
-
-### 2. **Updated Files**
-
-#### `src/services/data_integration.py`
-**Added 3 new methods:**
+The system automatically maps crop names to APEDA product codes:
 
 ```python
-class DataGovIntegration:
-    APEDA_PRODUCT_URL = "https://agriexchange.apeda.gov.in/Production/IndiaCat/GetIndiaProductionCatProduct"
-    
-    def fetch_product_codes(self, category: str = "Agri") -> dict:
-        """Fetch all product codes from APEDA API with caching"""
-        # Fetches from all 7 categories and caches results
-        # Returns: {code: {name, category}}
-    
-    def find_product_code(self, crop_name: str) -> Optional[str]:
-        """Find product code using fuzzy matching + aliases"""
-        # Supports: direct match, partial match, alias matching
-        # Example: "paddy" → "1011" (Rice), "corn" → "1009" (Maize)
-    
-    def fetch_apeda_data(self, fin_year, category, product_code, report_type):
-        """Existing method - now receives specific product codes"""
+# User query: "rice production in Punjab 2023-24"
+# System automatically:
+# 1. Identifies crop: "rice"
+# 2. Finds product code: "1011"
+# 3. Fetches data for rice specifically
 ```
 
-**Alias Mapping:**
-- paddy → rice
-- corn → maize
-- basmati → rice
-- chana → gram
-- arhar → tur (arhar)
-- peanut → groundnut
-- soybean → soyabean
-- sarson → rapeseed & mustard
+### Key Methods
 
-#### `src/services/langgraph_agent.py`
-**Updated `fetch_apeda_production` tool:**
+**`src/services/data_integration.py`**
+
+```python
+def find_product_code(self, crop_name: str) -> Optional[str]:
+    """Find product code for a crop using fuzzy matching"""
+    # Supports aliases: paddy→rice, corn→maize, chana→gram
+    
+def fetch_apeda_data(self, fin_year, category, product_code, report_type):
+    """Fetch production data from APEDA API"""
+```
+
+**`src/services/langgraph_agent.py`**
 
 ```python
 @tool
-def fetch_apeda_production(state: str = None, year: str = None, 
-                           commodity: str = None, category: str = "Agri") -> dict:
-    """Now accepts commodity parameter and auto-finds product code"""
-    
-    # New logic:
-    # 1. Convert year: "2023" → "2023-24"
-    # 2. Find product code: commodity="rice" → product_code="1011"
-    # 3. Fetch data with specific product code
-    # 4. Filter by state if specified
-    # 5. Return structured data with product_code in response
+def fetch_apeda_production(state, year, commodity, category):
+    """LangGraph tool that auto-resolves product codes"""
 ```
-
-**Updated system prompt:**
-- Added commodity parameter documentation
-- Updated examples to show commodity usage
-- Clear instructions: "ALWAYS provide the commodity parameter"
 
 ---
 
-## Verification Results
+## Usage Examples
 
-### Test 1: Punjab Rice 2023-24
+### Query 1: State-specific crop production
 ```
-Query: "rice production in Punjab 2023-24"
-Product Code: 1011 (Rice)
-Result: 14,356 thousand tonnes (10.42% of India) ✅
+"rice production in Punjab 2023-24"
+→ Product Code: 1011
+→ Result: 14,356 thousand tonnes (10.42% of India)
 ```
 
-### Test 2: Haryana Wheat 2023-24
+### Query 2: Fruit production
 ```
-Query: "wheat production in Haryana 2023-24"
+"mango production in Maharashtra 2023-24"
+→ Category: Fruits
+→ Result: State-level mango production data
 Product Code: 1013 (Wheat)
 Result: 11,191 thousand tonnes (9.88% of India) ✅
 ```

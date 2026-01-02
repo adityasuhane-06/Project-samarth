@@ -2,65 +2,72 @@
 
 ## ✅ What's Been Built
 
-You now have a **fully functional, production-ready system** with advanced two-model architecture and MongoDB caching!
+A **fully functional, production-ready AI-powered agricultural Q&A system** with LangGraph agentic workflow, RAG, and MongoDB caching.
 
 ### Core Components
 
-1. **Modular Backend** (`app_modular.py`) ⭐ RECOMMENDED
-   - FastAPI-based REST API
+1. **Modular Backend** (`src/app_modular.py`) ⭐ PRODUCTION
+   - FastAPI-based REST API with async support
    - Clean modular architecture (8 modules)
-   - Two-model AI Agent system (QueryRouter + QueryProcessor)
-   - MongoDB Atlas caching (135x faster)
-   - ~1,300 lines organized across modules
+   - LangGraph agentic workflow (primary path)
+   - Two-model fallback architecture (QueryRouter + QueryProcessor)
+   - MongoDB Atlas caching (30-40x faster response)
+   - RAG with ChromaDB for knowledge base search
    - **Deployed on Render**: https://project-samarth-gxou.onrender.com
 
 2. **React Frontend** (`frontend/`) ⭐ PRODUCTION
-   - Modern React 18 + Vite 5.0.8 + Tailwind CSS 3.3.6
+   - Modern React 18 + Vite 5 + Tailwind CSS 3
    - 9 modular, reusable components
-   - Real-time query processing with formatted answers
-   - Source citation display with rich formatting
-   - Fully responsive design (desktop, tablet, mobile)
-   - Real-time server statistics and cache performance
+   - Real-time query processing with rich formatting
+   - Source citation display with links
+   - Fully responsive design (mobile-first)
+   - Real-time server stats and cache performance
    - Sample question buttons for quick testing
-   - **Deployed on Vercel**: Ready for deployment (see FRONTEND_DEPLOYMENT.md)
+   - **Deployed on Vercel**: Connected to backend API
 
-3. **Original Backend** (`app.py`) - Backup
-   - Monolithic version (~2,000 lines)
-   - 100% feature parity
-   - Kept for reference
+3. **Documentation** (`docs/`)
+   - Architecture guides and system design
+   - MongoDB caching implementation details
+   - Deployment guides (Render + Vercel)
+   - API documentation and quickstart
 
-4. **Comprehensive Documentation**
-   - `MODULE_README.md` - Modular architecture guide
-   - `COMPARISON_REPORT.md` - Feature parity analysis
-   - `MONGODB_CACHING.md` - Caching system details
-   - `TWO_MODEL_TEST_REPORT.md` - Model testing results
-   - `ARCHITECTURE.md` - System design
-   - `QUICKSTART.md` - Setup guide
-
-5. **Testing & Utilities**
-   - `test_system.py` - Automated tests
+4. **Testing & Utilities**
+   - Automated integration tests
    - Health checks & cache statistics
-   - `requirements.txt` - Dependencies
+   - API testing scripts
+   - `requirements.txt` - All dependencies
 
 ## 🎯 Advanced Features
 
-### AI Agent Architecture (Two-Model System)
-- **Agent 1 (QueryRouter)**: `gemini-2.5-flash` for intelligent query routing
-  - Analyzes user questions
-  - Autonomously selects appropriate datasets
-  - Routes to correct data sources
-- **Agent 2 (QueryProcessor)**: `gemini-2.5-flash` for answer generation
-  - Processes selected data
-  - Generates natural language answers
-  - Formats with rich HTML (cards, badges, highlights)
-- **Separate API keys** for optimal performance and rate limiting
-- **Agent-based decision making** for multi-dataset queries
+### LangGraph Agentic Workflow (Primary)
+- **State Machine Architecture**: TypedDict state flows through graph
+- **5 Tools Available**:
+  1. `fetch_apeda_production` - State-level data (2019-2024)
+  2. `fetch_crop_production` - District-level data (2013-2015)
+  3. `fetch_rainfall_data` - Historical & recent rainfall
+  4. `search_knowledge_base` - RAG semantic search
+  5. `web_search` - Real-time Google search
+- **Autonomous Decision Making**: LLM decides which tools to call
+- **Multi-Step Reasoning**: Agent can chain multiple tool calls
+- **Conditional Routing**: State-based workflow decisions
+
+### Two-Model Fallback Architecture
+- **Agent 1 (QueryRouter)**: Intelligent dataset selection
+- **Agent 2 (QueryProcessor)**: Natural language answer generation
+- **Separate API Keys**: Optimal rate limiting
+- **Activated**: When LangGraph unavailable
+
+### RAG Knowledge Base (ChromaDB)
+- **100+ Agricultural Documents**: Crops, regions, seasons, soil types
+- **HuggingFace Embeddings**: sentence-transformers (free, local)
+- **Semantic Search**: Find relevant context for queries
+- **Cloud & Local Storage**: ChromaDB supports both
 
 ### MongoDB Caching System
-- **Performance**: 135x faster on cache hits
+- **Performance**: 30-40x faster on cache hits (3-4s → 100ms)
 - **TTL Management**: 180-365 days based on data type
-- **Hit Tracking**: Counts reuse of cached queries
-- **Statistics**: Detailed cache analytics endpoint
+- **Hit Count Tracking**: Popular query identification
+- **Statistics API**: Detailed cache analytics
 
 ## 📊 System Capabilities
 

@@ -1,43 +1,49 @@
 # Quick Start Guide - Project Samarth
+**Last Updated**: January 2, 2026
 
 ## 🚀 Getting Started in 5 Minutes
 
 ### Step 1: Install Dependencies
 ```bash
-pip install -r requirements.txt
+pip install -r src/requirements.txt
 ```
 
-Or manually:
+Key packages:
 ```bash
-pip install fastapi uvicorn pandas requests google-generativeai python-dotenv motor pymongo
+pip install fastapi uvicorn pandas requests google-generativeai python-dotenv motor pymongo langchain langchain-google-genai langgraph chromadb sentence-transformers
 ```
 
 ### Step 2: Configure Environment
 Create `.env` file in project root:
 ```env
+# Gemini AI Keys (3 keys for optimal rate limiting)
 SECRET_KEY=your_gemini_api_key_here
 API_GUESSING_MODELKEY=your_second_gemini_key_here
-DATABASE_URL=your_mongodb_connection_string
+AGENT_API_KEY=your_third_gemini_key_here
+
+# MongoDB Atlas
+DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/
+
+# ChromaDB Cloud (optional - can use local)
+CHROMA_API_KEY=your_chroma_api_key
+CHROMA_TENANT=your_tenant
+CHROMA_DATABASE=Project Samarth
+
+# Data.gov.in API
 DATA_GOV_API_KEY=your_data_gov_api_key_here
 USE_REAL_API=true
 ```
 
 **Get API Keys:**
-- Gemini API: https://aistudio.google.com/app/apikey
+- Gemini API: https://aistudio.google.com/app/apikey (get 3 keys)
 - MongoDB: https://www.mongodb.com/cloud/atlas (free tier)
+- ChromaDB: https://www.trychroma.com (optional, local works too)
 
 ### Step 3: Start the Backend
 
-**Option A: Modular Version (Recommended)**
 ```bash
 cd src
 python app_modular.py
-```
-
-**Option B: Original Version (Backup)**
-```bash
-cd src
-python app.py
 ```
 
 You should see:
@@ -46,14 +52,26 @@ You should see:
 APPLICATION STARTUP
 ============================================================
 ✅ Connected to MongoDB Atlas successfully!
+✅ LangGraph Agent loaded successfully
+✅ LangGraph Agent initialized
 Loading data from data.gov.in...
-Data loaded successfully. Crop records: 104, Rainfall records: 8
+Data loaded successfully. Crop records: 10, Rainfall records: 8
 ============================================================
 
 INFO:     Uvicorn running on http://0.0.0.0:8000
 ```
 
-### Step 4: Test the System
+### Step 4: Start the Frontend (separate terminal)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend will be available at: http://localhost:5173
+
+### Step 5: Test the System
 
 **Health Check:**
 ```bash
@@ -65,220 +83,230 @@ curl http://localhost:8000/api/health
 curl http://localhost:8000/api/cache/stats
 ```
 
-### Step 5: Try Sample Queries
+### Step 6: Try Sample Queries
 
-**Basic Query (Cache Miss - ~13s):**
+**Basic Query (Cache Miss - ~3-4s with LangGraph):**
 ```bash
 curl -X POST http://localhost:8000/api/query \
   -H "Content-Type: application/json" \
   -d '{"question": "What is the rice production in Punjab for 2023?"}'
 ```
 
-**Same Query Again (Cache Hit - ~0.1s):**
+**Same Query Again (Cache Hit - ~100ms):**
 ```bash
-# Run the same command again - watch the speed!
+# Run the same command again - 30-40x faster!
 ```
 
 **More Sample Queries:**
 ```
+"What are rabi crops?"
 "Show wheat production in Karnataka for 2014"
 "Compare maize production across states"
-"Show rainfall in Pune for 2024"
-"Punjab rainfall from 1950 to 1960"
+"Tell me about agricultural practices in Punjab"
+"What is crop rotation?"
 ```
 
-## 📊 Verify Two-Model Architecture
+## 📊 Verify LangGraph Agent
 
 Check the console output - you'll see:
 ```
-🔀 STEP 1: ROUTING QUERY TO CORRECT APIs...
-DEBUG: QueryRouter with API key: AIzaSy...
-✅ Routing complete
-
-💡 STEP 3: GENERATING NATURAL LANGUAGE ANSWER...
-DEBUG: QueryProcessor with API key: AIzaSy...
-✅ Answer generated
+🤖 USING LANGGRAPH AGENTIC WORKFLOW...
+DEBUG: Agent reasoning step 1
+DEBUG: Tool call: fetch_apeda_production
+✅ Agent completed in 2 steps
+✅ Sources used: ['fetch_apeda_production', 'search_knowledge_base']
 ```
 
-Two different API keys = Two models working! ✅
+LangGraph agent autonomously decides which tools to use! ✅
+
+**If LangGraph fails, automatic fallback:**
+```
+⚠️ LangGraph Agent failed
+⚠️ Falling back to two-model architecture...
+🔀 USING TWO-MODEL ARCHITECTURE (fallback)...
+```
 
 ## 💾 Verify MongoDB Caching
 
 **First Query (Cache Miss):**
 ```
-💾 STEP 0: CHECKING CACHE
-❌ Cache miss. Processing query from scratch...
-[13.5 seconds later]
-💾 STEP 4: CACHING RESPONSE FOR FUTURE USE...
+💾 STEP 0: CHECKING CACHE (key: abc123...)
+❌ Cache miss. Processing query...
+🤖 USING LANGGRAPH AGENTIC WORKFLOW...
+[3-4 seconds later]
+💾 CACHING RESPONSE...
 ```
 
 **Second Query (Cache Hit):**
 ```
-💾 STEP 0: CHECKING CACHE
+💾 STEP 0: CHECKING CACHE (key: abc123...)
 💾 CACHE HIT! Query has been answered 0 times before
 ⚡ RETURNING CACHED RESPONSE (saved ~3-4 seconds!)
-[0.1 seconds - 135x faster!]
+[100ms - 30-40x faster!]
 ```
 
-## 🎬 Recording Your Loom Video
+## � System Architecture Overview
 
-### Pre-Recording Checklist
-- [ ] Modular server is running (python app_modular.py)
-- [ ] MongoDB connected (check startup logs)
-- [ ] Health endpoint working
-- [ ] Cache stats endpoint working
-- [ ] Test one query (cache miss + cache hit)
-- [ ] Close unnecessary applications
-- [ ] Clean desktop/background
+### Key Components:
 
-### What to Show
-1. **Architecture** (15 seconds)
-   - Show folder structure (config/, models/, services/, api/, database/)
-   - Mention modular design
+**1. LangGraph Agentic Workflow (Primary)**
+- Autonomous tool selection and execution
+- 5 tools: APEDA data, crop data, rainfall, RAG search, web search
+- Multi-step reasoning with state management
 
-2. **Two Models** (20 seconds)
-   - Show .env with two keys
-   - Show console logs of both models being used
-   - Explain routing vs answer generation
+**2. RAG Knowledge Base**
+- 100+ agricultural documents embedded
+- ChromaDB vector storage (local or cloud)
+- HuggingFace sentence-transformers for embeddings
+- Semantic search for contextual information
 
-3. **MongoDB Caching** (30 seconds)
-   - Show first query (slow - cache miss)
-   - Show same query again (fast - cache hit)
-   - Show cache stats endpoint
+**3. MongoDB Caching**
+- 30-40x performance improvement
+- TTL-based expiration (180-365 days)
+- Hit count tracking
+- Detailed analytics
 
-4. **Live Queries** (45 seconds)
-   - Test 2-3 different questions
-   - Show source citations
-   - Demonstrate speed improvement
+**4. Two-Model Fallback**
+- QueryRouter: Dataset selection
+- QueryProcessor: Answer generation
+- Activates if LangGraph fails
 
-### Recording Tips
-1. **Use Loom Desktop App** for better quality
-2. **Select "Screen + Camera"** if you want to be visible
-3. **Test audio levels** before recording
-4. **Practice your script** 2-3 times
-5. **Keep it under 2 minutes** - aim for 1:45 to be safe
-
-### Video Structure
-```
-0:00-0:15  Introduction & Problem Statement
-0:15-0:35  System Architecture Quick Overview
-0:35-1:30  Live Demo (3 queries)
-1:30-1:50  Key Design Decisions
-1:50-2:00  Wrap-up
-```
-
-### What to Show
-1. **Terminal with server running** (3 seconds)
-2. **Frontend interface** (majority of time)
-3. **Live queries and results** (focus here)
-4. **Source citations** (zoom in if needed)
-5. **Brief code glimpse** (optional, 5 seconds max)
-
-### What to Say
-
-**Opening:**
-"I built an intelligent Q&A system for Project Samarth that integrates data from data.gov.in to answer complex questions about India's agricultural economy."
-
-**During Demo:**
-"Watch how it handles this query... Notice the source citations... The system combines data from multiple datasets..."
-
-**Key Points:**
-- Direct integration with data.gov.in
-- Multi-dataset synthesis
-- Full source traceability
-- Handles complex natural language queries
-
-**Closing:**
-"This prototype shows end-to-end functionality from question to cited answer, ready for deployment in secure environments."
+**5. Modular Architecture**
+- 8 separate modules (config, models, database, services, api)
+- Clean separation of concerns
+- Easy to maintain and extend
 
 ## 🔍 Troubleshooting
 
 ### Server won't start
 ```bash
-# Check if port 5000 is in use
-lsof -i :5000
+# Check if port 8000 is in use (Windows)
+netstat -ano | findstr :8000
+
+# Check if port 8000 is in use (Mac/Linux)
+lsof -i :8000
 
 # Try a different port
-PORT=5001 python app.py
-# Then update API_URL in index.html to http://localhost:5001
+uvicorn app_modular:app --host 0.0.0.0 --port 8001
 ```
 
+### Frontend won't connect
+- Update `frontend/.env` or `frontend/src/services/api.js`
+- Make sure `API_URL` points to correct backend
+- Check CORS settings in backend
+
 ### API Key Error
-- Make sure you're using an Anthropic API key (starts with sk-ant-)
+- Make sure you're using Google Gemini API keys
 - Check that you have credits/quota available
-- Verify key is entered correctly (no spaces)
+- Verify keys are entered correctly (no spaces)
+- Get keys from: https://aistudio.google.com/app/apikey
 
-### CORS Error
-- Make sure backend is running on localhost:5000
-- Try accessing from http://localhost not file://
-- Check browser console for specific error
+### MongoDB Connection Error
+- Verify DATABASE_URL in .env
+- Check network access in MongoDB Atlas (allow 0.0.0.0/0)
+- Ensure database user has read/write permissions
+- System will continue without cache if MongoDB unavailable
 
-### No Results
-- Check backend terminal for errors
-- Verify API key has sufficient quota
-- Try a simpler query first
+### ChromaDB Error
+- Local ChromaDB works without API key
+- For cloud, verify CHROMA_API_KEY and CHROMA_TENANT
+- System continues without RAG if ChromaDB unavailable
+
+### LangGraph Agent Fails
+- System automatically falls back to two-model architecture
+- Check logs for specific error
+- Verify AGENT_API_KEY is set correctly
 
 ## 📊 Understanding the Output
 
 ### Answer Format
 The answer includes:
-- Direct response to your question
-- Specific numbers and statistics
+- Natural language response to your question
+- Specific numbers and statistics from data sources
+- Context from RAG knowledge base (if applicable)
 - Source citations in [Source: ...] format
 
 ### Data Sources Section
 Shows:
-- Dataset name
+- Dataset name (APEDA, Crop Production, Rainfall, RAG)
 - Source organization
-- Link to original data on data.gov.in
+- Link to original data or knowledge base
 
 ### Raw Results (in API response)
-Contains the actual data queried, useful for debugging
+Contains the actual data queried, useful for debugging and further analysis
 
-## 🎯 Best Practices for Demo
+## 🎯 Best Practices
 
-### Do:
-✅ Start with simple queries, move to complex
-✅ Highlight the source citations
-✅ Show variety (comparison, top N, trends)
-✅ Explain your design choices
-✅ Keep energy high and pace quick
+### Query Tips:
+✅ Start with specific questions (state, crop, year)
+✅ Try agricultural knowledge questions ("What are rabi crops?")
+✅ Use natural language - system understands context
+✅ Check cache stats to see popular queries
+✅ Monitor LangGraph agent reasoning in console logs
+
+### Performance Tips:
+✅ Let MongoDB handle caching automatically
+✅ Popular queries become instant (30-40x faster)
+✅ Use RAG for agricultural knowledge
+✅ LangGraph adapts to query complexity
 
 ### Don't:
-❌ Spend too long on code
-❌ Get stuck debugging on camera
-❌ Forget to show the citations
-❌ Rush through the actual queries
-❌ Go over 2 minutes
+❌ Don't manually clear cache frequently (TTL handles it)
+❌ Don't worry if LangGraph fails (fallback is automatic)
+❌ Don't forget to check both frontend and backend logs
 
-## 📝 Evaluation Criteria Mapping
+## ✨ Key Features
 
-| Criteria | How We Address It |
-|----------|-------------------|
-| **Problem Solving** | Shows data discovery, API integration, end-to-end flow |
-| **System Architecture** | Clean separation: data layer, processing, presentation |
-| **Accuracy** | Every answer includes specific numbers from data |
-| **Traceability** | All claims linked to data.gov.in sources |
-| **Data Security** | Deployed locally, no external data storage |
+| Feature | Description |
+|---------|-------------|
+| **LangGraph Agent** | Autonomous multi-tool agentic workflow |
+| **RAG Knowledge Base** | 100+ agricultural documents, semantic search |
+| **MongoDB Caching** | 30-40x performance improvement |
+| **Two-Model Fallback** | Automatic fallback if agent fails |
+| **Multi-Dataset** | APEDA, crop production, rainfall, historical data |
+| **Source Citations** | Every answer includes traceable sources |
+| **Modular Architecture** | Clean, maintainable, production-ready code |
 
-## 🎥 Final Checklist Before Publishing
+## 📦 Quick Reference
 
-- [ ] Video is under 2 minutes
-- [ ] Audio is clear
-- [ ] Shows working prototype
-- [ ] Demonstrates 2-3 queries
-- [ ] Highlights source citations
-- [ ] Explains key design decisions
-- [ ] Link is set to public
-- [ ] Link works when you test it
+### Start System
+```bash
+# Backend (Terminal 1)
+cd src
+python app_modular.py
 
-## 🔗 Submission
+# Frontend (Terminal 2)
+cd frontend
+npm run dev
+```
 
-After recording:
-1. **Upload to Loom**
-2. **Set visibility to "Public"** or "Anyone with link"
-3. **Test the link** in incognito/private browser
-4. **Copy the link**
-5. **Submit it** in the challenge form
+### Check Status
+```bash
+# Health check
+curl http://localhost:8000/api/health
 
-Good luck! 🚀
+# Cache statistics
+curl http://localhost:8000/api/cache/stats
+
+# Frontend
+http://localhost:5173
+```
+
+### Environment Setup
+- 3 Gemini API keys (SECRET_KEY, API_GUESSING_MODELKEY, AGENT_API_KEY)
+- MongoDB Atlas connection string
+- ChromaDB (optional - local works)
+- Data.gov.in API key
+
+### Production URLs
+- Backend: https://project-samarth-gxou.onrender.com
+- Frontend: https://project-samarth-frontend.vercel.app
+
+---
+
+**System Status**: ✅ **PRODUCTION READY**  
+**Performance**: ⚡ **30-40x FASTER with caching**  
+**Architecture**: 🤖 **LangGraph + RAG + Two-Model Fallback**
+
+**Last Updated**: January 2, 2026  
+**Version**: 3.0

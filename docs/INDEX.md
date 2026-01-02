@@ -1,6 +1,10 @@
 # 📚 Project Samarth - Complete Documentation Index
 
-> **An intelligent Q&A system for Indian agricultural data with Two-Model Architecture & MongoDB Caching**
+> **An intelligent Q&A system for Indian agricultural data with LangGraph Agentic Workflow, RAG, MongoDB Caching & Two-Model Fallback**
+
+**Last Updated**: January 2, 2026  
+**Version**: 3.0  
+**Status**: Production Ready (Deployed on Render + Vercel)
 
 ---
 
@@ -9,15 +13,17 @@
 **New to the project? Start with these in order:**
 
 1. **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** ⭐ START HERE
-   - Complete overview of what's been built
-   - Two-model architecture explained
+   - Complete overview of the system
+   - LangGraph agentic workflow explained
+   - RAG integration with ChromaDB
    - MongoDB caching system
-   - Video demo preparation
+   - Two-model fallback architecture
 
 2. **[QUICKSTART.md](QUICKSTART.md)** - Get running in 5 minutes
    - Installation instructions
    - Running modular architecture
    - Sample queries to try
+   - Troubleshooting guide
 
 3. **[README.md](README.md)** - Project documentation
    - Feature overview
@@ -40,23 +46,28 @@
    - System architecture diagrams
    - Component details
    - Data flow examples
+   - LangGraph + RAG integration
 
 5. **[SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md)** - Technical deep dive
-   - Two-model architecture details
-   - MongoDB caching implementation
-   - Query processing pipeline
+   - LangGraph agentic workflow (primary)
+   - RAG with ChromaDB implementation
+   - Two-model fallback architecture
+   - MongoDB caching pipeline
+   - Query processing flow
 
 6. **[MODULAR_ARCHITECTURE.md](MODULAR_ARCHITECTURE.md)** ⭐ NEW!
    - Complete module documentation
    - Development guidelines
    - Data flow diagrams
    - Module responsibilities
+   - 8-module architecture explained
 
 7. **[MONGODB_CACHING.md](MONGODB_CACHING.md)** ⭐ NEW!
    - Cache implementation details
-   - Performance benchmarks (135x faster!)
+   - Performance benchmarks (30-40x faster!)
    - TTL management
    - Cache statistics
+   - API endpoints
 
 8. **[TWO_MODEL_TEST_REPORT.md](TWO_MODEL_TEST_REPORT.md)** - Testing results
    - Model routing verification
@@ -85,25 +96,6 @@
 
 ---
 
-## 🎬 Preparing Your Demo
-
-**Ready to record your Loom video?**
-
-5. **[DEMO_SCRIPT.md](DEMO_SCRIPT.md)** - 2-minute video script
-   - Exact timing breakdown
-   - What to say and when
-   - What to show on screen
-   - Tips for recording
-
-6. **[PRESENTATION_GUIDE.md](PRESENTATION_GUIDE.md)** - Visual presentation tips
-   - Screen layout recommendations
-   - Scene-by-scene breakdown
-   - Cursor movement best practices
-   - Voice and pacing tips
-   - Common demo pitfalls
-
----
-
 ## 🔧 Technical Resources
 
 **Need help or want to debug?**
@@ -124,19 +116,19 @@
 - **config/settings.py** - Environment & configuration (67 lines)
 - **models/api_models.py** - Pydantic models (38 lines)
 - **database/mongodb.py** - MongoDB cache operations (188 lines)
-- **services/ai_models.py** - Two Gemini models (169 lines)
+- **services/langgraph_agent.py** - LangGraph agentic workflow (primary)
+- **services/rag_service.py** - RAG with ChromaDB (100+ docs)
+- **services/ai_models.py** - Two Gemini models (fallback) (169 lines)
 - **services/data_integration.py** - External APIs (280 lines)
 - **services/query_engine.py** - Query execution (378 lines)
 - **api/routes.py** - All API endpoints (205 lines)
 - **app_modular.py** - Main entry point (105 lines)
 
-### Original Version (Backup)
-- **app.py** - Monolithic version (~2000 lines)
-
-### Frontend & Testing
-- **index.html** - React-based UI
-- **test_system.py** - Testing suite
-- **requirements.txt** - Dependencies
+### Frontend (React + Vite + Tailwind)
+- **frontend/src/App.jsx** - Main app component
+- **frontend/src/components/** - 9 modular React components
+- **frontend/src/services/api.js** - API integration
+- **frontend/package.json** - Dependencies (React 18, Vite 5, Tailwind 3)
 
 ---
 
@@ -183,16 +175,29 @@
 
 ## 🎯 Key Features Demonstrated
 
-✅ **Two-Model Architecture**
+✅ **LangGraph Agentic Workflow (Primary)**
+   - Autonomous multi-step reasoning and tool selection
+   - 5 tools: APEDA data, crop data, rainfall, RAG search, web search
+   - State machine with decision-making capabilities
+   - Adaptive query handling based on context
+
+✅ **RAG with ChromaDB**
+   - 100+ agricultural documents embedded
+   - Semantic search with HuggingFace embeddings
+   - Context-aware knowledge retrieval
+   - Answers agricultural concept questions
+
+✅ **Two-Model Fallback Architecture**
    - Model 1 (QueryRouter): Intelligent query routing
    - Model 2 (QueryProcessor): Natural language answers
    - Separate API keys for optimal performance
+   - Activates when LangGraph unavailable
 
 ✅ **MongoDB Caching System**
-   - 135x performance improvement
+   - 30-40x performance improvement
    - Smart TTL management (180-365 days)
    - Cache hit tracking
-   - Detailed statistics
+   - Detailed statistics and analytics
 
 ✅ **Multi-Dataset Integration**
    - Crop production (2013-2015, district-level)
@@ -223,16 +228,19 @@
 
 ## 📊 Project Statistics
 
-- **Architecture**: Modular (8 modules)
-- **Lines of Code**: ~1,300 (modular) vs ~2,000 (monolithic)
-- **Documentation**: ~15,000 words
-- **Datasets Integrated**: 5 (expandable)
+- **Architecture**: Modular (8 modules + LangGraph + RAG)
+- **Lines of Code**: ~1,800 (modular + LangGraph + RAG)
+- **Documentation**: ~18,000 words
+- **Datasets Integrated**: 5 (APEDA, crop, rainfall, historical, RAG)
 - **API Endpoints**: 8
-- **Cache Performance**: 135x faster with hits
-- **Two AI Models**: Separate routing + processing
-- **Database**: MongoDB Atlas
+- **Cache Performance**: 30-40x faster with hits
+- **AI Components**: LangGraph Agent + RAG + Two-Model Fallback
+- **Databases**: MongoDB Atlas (cache) + ChromaDB (vectors)
 - **Time to Setup**: 5 minutes
 - **Time to Deploy**: < 1 hour
+- **RAG Documents**: 100+ agricultural knowledge docs
+- **LangGraph Tools**: 5 autonomous tools
+- **Frontend Components**: 9 modular React components
 
 ---
 

@@ -1,20 +1,31 @@
 # 🏗️ Project Samarth - System Architecture
 
-## 📊 Two-Model AI Architecture
+## 📊 AI Architecture
 
-### Model 1: QueryRouter (Intelligent API Routing)
-- **Purpose**: Routes queries to the correct data sources
-- **Model**: Google Gemini 1.5 Flash (Fast & Efficient)
-- **API Key**: `API_GUESSING_MODELKEY` from .env
-- **Function**: `route_query(question)` → Returns API selection parameters
-- **Location**: `src/app.py` (Lines 350-475)
+### Primary: LangGraph Agentic Workflow
+- **Purpose**: Autonomous multi-step reasoning with tool usage
+- **Model**: Google Gemini 2.5 Flash
+- **API Key**: `AGENT_API_KEY` (fallback to `SECRET_KEY`)
+- **Location**: `src/services/langgraph_agent.py`
+- **State Machine**: TypedDict-based state management
+- **Tools**: 5 autonomous tools for data fetching and search
+- **Routing**: Conditional edges based on LLM decisions
 
-### Model 2: QueryProcessor (Answer Generation)
-- **Purpose**: Generates natural language answers from data
-- **Model**: Google Gemini 2.5 Flash (More Powerful)
-- **API Key**: `SECRET_KEY` from .env
-- **Function**: `generate_answer(question, data, sources)` → Returns formatted answer
-- **Location**: `src/app.py` (Lines 477+)
+### Fallback: Two-Model Architecture
+
+#### Model 1: QueryRouter (Dataset Selection)
+- **Purpose**: Intelligent routing to correct data sources
+- **Model**: Google Gemini 2.5 Flash
+- **API Key**: `API_GUESSING_MODELKEY`
+- **Function**: `route_query(question)` → Returns parameters
+- **Location**: `src/services/ai_models.py`
+
+#### Model 2: QueryProcessor (Answer Generation)
+- **Purpose**: Natural language answer generation
+- **Model**: Google Gemini 2.5 Flash
+- **API Key**: `SECRET_KEY`
+- **Function**: `generate_answer(question, data, sources)` → Answer
+- **Location**: `src/services/ai_models.py`
 
 ---
 
@@ -37,15 +48,7 @@
 - **Fetch Function**: `fetch_apeda_data(fin_year, category, product_code)`
 - **Query Function**: `query_apeda(params)`
 - **Categories**: All, Agri, Fruits, Vegetables, Spices, LiveStock, Plantations, Floriculture
-- **Product Codes**: 
-  - Rice: 1011
-  - Wheat: 1013
-  - Maize: 1009
-  - Milk: 1023
-  - Mango: 1050
-  - Potato: 1083
-  - Turmeric: 1099
-  - (See `crop_to_code` dictionary in app.py)
+- **Product Code Mapping**: Automatic via `find_product_code()` method
 
 ### 3️⃣ Daily Rainfall API
 - **Source**: data.gov.in - India Meteorological Department (IMD)
@@ -85,36 +88,39 @@
          │
          ▼
 ┌─────────────────────────────────┐
-│   QueryRouter (Model 1)         │
-│   - Analyzes question            │
-│   - Determines year range        │
-│   - Selects appropriate APIs     │
-│   - Returns parameters           │
+│   MongoDB Cache Check           │
+│   - Generate MD5 hash            │
+│   - Lookup cached response       │
 └────────┬────────────────────────┘
          │
-         ▼
-┌─────────────────────────────────┐
-│   DataQueryEngine               │
-│   - Calls selected APIs          │
-│   - Fetches data                 │
-│   - Filters & aggregates         │
-│   - Returns structured results   │
-└────────┬────────────────────────┘
+         ├─ ✅ Cache Hit → Return (100ms)
          │
-         ▼
-┌─────────────────────────────────┐
-│   QueryProcessor (Model 2)      │
-│   - Receives data & sources      │
-│   - Generates natural answer     │
-│   - Formats with citations       │
-│   - Returns beautified response  │
-└────────┬────────────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│  User Answer    │
-│  (Beautified)   │
-└─────────────────┘
+         └─ ❌ Cache Miss
+                  ↓
+         ┌─────────────────────────┐
+         │  LangGraph Agent        │
+         │  (Primary Path)         │
+         │  - Multi-step reasoning  │
+         │  - Tool selection        │
+         │  - 5 autonomous tools    │
+         └────────┬────────────────┘
+                  │
+                  ├─ ✅ Success → Cache & Return
+                  │
+                  └─ ❌ Error/Unavailable
+                           ↓
+                  ┌──────────────────────┐
+                  │  Two-Model Fallback  │
+                  │  1. QueryRouter      │
+                  │  2. DataQueryEngine  │
+                  │  3. QueryProcessor   │
+                  └────────┬─────────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │  Cache Response  │
+                  │  Return Answer   │
+                  └─────────────────┘
 ```
 
 ---
@@ -128,95 +134,107 @@ Project samarth/
 ├── activate_env.bat              # Windows activation script
 │
 ├── src/                          # Main application source
-│   ├── app.py                    # 🔥 Core FastAPI application
-│   │                             # - DataGovIntegration class (all API fetching)
-│   │                             # - QueryRouter class (API routing)
-│   │                             # - QueryProcessor class (answer generation)
-│   │                             # - DataQueryEngine class (query execution)
-│   │                             # - FastAPI endpoints
-│   ├── index.html                # 🎨 Beautified React frontend
+│   ├── app_modular.py            # 🔥 Main FastAPI application
 │   ├── requirements.txt          # Python dependencies
 │   ├── test_gemini.py            # Gemini API test script
-│   ├── enhanced_data.py          # Data enhancement utilities
-│   └── list_models.py            # List available Gemini models
+│   │
+│   ├── api/                      # API routes
+│   │   ├── __init__.py
+│   │   └── routes.py             # All API endpoints
+│   │
+│   ├── config/                   # Configuration
+│   │   ├── __init__.py
+│   │   └── settings.py           # Settings & environment vars
+│   │
+│   ├── database/                 # Database layer
+│   │   ├── __init__.py
+│   │   └── mongodb.py            # MongoDB caching
+│   │
+│   ├── models/                   # Data models
+│   │   ├── __init__.py
+│   │   └── api_models.py         # Pydantic models
+│   │
+│   └── services/                 # Business logic
+│       ├── __init__.py
+│       ├── ai_models.py          # Two-model fallback
+│       ├── data_integration.py   # External API integration
+│       ├── query_engine.py       # Query execution
+│       ├── langgraph_agent.py    # LangGraph agentic workflow
+│       ├── rag_service.py        # RAG with ChromaDB
+│       ├── langchain_ai.py       # LangChain implementations
+│       └── apeda_codes.py        # Product code mappings
+│
+├── frontend/                     # React frontend
+│   ├── src/
+│   │   ├── components/           # 9 modular components
+│   │   └── services/             # API client
+│   ├── package.json
+│   └── vite.config.js
 │
 ├── test/                         # Test suite
-│   ├── test_system.py            # System integration tests
-│   ├── test_integrated_system.py # Full API integration tests
-│   └── api_tests/                # Individual API test scripts
-│       ├── test_apeda_api.py              # APEDA API comprehensive tests
-│       ├── test_apeda_categories.py       # APEDA category validation
-│       ├── test_rainfall_api.py           # Daily rainfall tests
-│       ├── explore_pune_rainfall.py       # Pune rainfall exploration
-│       ├── fetch_pune_complete.py         # Pune 2024 complete data
-│       ├── test_historical_rainfall.py    # Historical rainfall tests
-│       ├── test_punjab_rainfall.py        # Punjab historical data
-│       ├── discover_subdivisions.py       # Discover meteorological subdivisions
-│       ├── get_subdivisions.py            # Get all subdivision names
-│       └── *.csv, *.json                  # Test data outputs
+│   ├── test_system.py
+│   ├── test_integrated_system.py
+│   └── api_tests/                # API testing scripts
 │
-├── docs/                         # Documentation
-│   ├── ARCHITECTURE.md           # Original architecture notes
-│   ├── INDEX.md                  # Documentation index
-│   ├── PROJECT_SUMMARY.md        # Project summary
-│   ├── QUICKSTART.md             # Quick start guide
-│   ├── README (1).md             # Additional README
-│   └── SYSTEM_ARCHITECTURE.md    # 📘 This file
-│
-└── deployment/                   # Deployment configuration
-    └── (deployment files)
-```
+└── docs/                         # Documentation
+    LangGraph Agent (Primary)
+**Location**: `src/services/langgraph_agent.py`
 
----
+**Components**:
+- **AgentState**: TypedDict-based state management
+- **5 Tools**: fetch_apeda_production, fetch_crop_production, fetch_rainfall_data, search_knowledge_base, web_search
+- **StateGraph**: Conditional routing based on LLM decisions
+- **ToolNode**: Executes selected tools
+- **Multi-step reasoning**: Agent can chain multiple tool calls
 
-## 🔧 Key Components
+### RAG Service
+**Location**: `src/services/rag_service.py`
+
+**Features**:
+- **Knowledge Base**: 100+ agricultural documents
+- **Embeddings**: HuggingFace sentence-transformers (local, free)
+- **Vector Store**: ChromaDB (cloud & local support)
+- **Semantic Search**: Retrieves relevant context for queries
 
 ### DataGovIntegration Class
-**Location**: `src/app.py`
+**Location**: `src/services/data_integration.py`
 
-**Methods**:
-- `__init__(api_key)` - Initialize with data.gov.in API key
-- `fetch_crop_production_data()` - Loads district crop data at startup
-- `fetch_rainfall_data()` - Loads sample rainfall data
-- `fetch_apeda_data(fin_year, category, product_code)` - Fetches APEDA production
-- `fetch_daily_rainfall(state, district, year, limit)` - Fetches daily rainfall
-- `fetch_historical_rainfall(subdivision, year, limit)` - Fetches historical rainfall
-- `_fetch_real_crop_data(limit)` - Internal method for real crop data
-- `_get_sample_crop_data()` - Returns sample crop data
-- `_get_sample_rainfall_data()` - Returns sample rainfall data
+**Key Methods**:
+- `fetch_apeda_data(fin_year, category, product_code)` - APEDA production
+- `find_product_code(crop_name)` - Automatic product code mapping
+- `fetch_daily_rainfall(state, district, year)` - Daily rainfall
+- `fetch_historical_rainfall(subdivision, year)` - Historical rainfall
 
-### QueryRouter Class
-**Location**: `src/app.py` (Lines 350-475)
+### QueryRouter & QueryProcessor (Fallback)
+**Location**: `src/services/ai_models.py`
 
-**Purpose**: Intelligent API routing using Gemini 1.5 Flash
+**QueryRouter**:
+- Analyzes question and returns routing parameters
+- Selects appropriate datasets based on years and query type
 
-**Method**:
-- `route_query(question)` - Analyzes question and returns API selection parameters
-
-**Returns**:
-```python
-{
-    "states": ["Punjab"],
-    "districts": ["Amritsar"],
-    "crops": ["rice"],
-    "crop_types": ["cereals"],
-    "years": ["2023-24"],
-    "data_needed": ["apeda_production"],  # The key routing decision
-    "comparison_type": "temporal" | "spatial" | "correlation" | None,
-    "aggregation": "sum" | "average" | "top" | "trend" | None,
-    "apeda_category": "Agri" | "Fruits" | etc. | None,
-    "product_code": "1011" | None,
-    "rainfall_type": "daily" | "historical" | None
-}
-```
+**QueryProcessor**:
+- Generates natural language answers with citations
+- Formats responses with structured data
 
 ### DataQueryEngine Class
-**Location**: `src/app.py`
+**Location**: `src/services/query_engine.py`
 
 **Methods**:
-- `__init__(crop_data, rainfall_data, data_gov_integration)`
-- `query_crop_production(params)` - Queries district-level crop data (2013-2015)
-- `query_apeda(params)` - Queries APEDA state-level data (2019-2024)
+- `query_crop_production(params)` - District data (2013-2015)
+- `query_apeda(params)` - State data (2019-2024)
+- `query_daily_rainfall(params)` - District rainfall (2019-2024)
+- `query_historical_rainfall(params)` - Historical (1901-2015)
+- `execute_query(params)` - Orchestrates all queries
+
+### MongoDB Cache
+**Location**: `src/database/mongodb.py`
+
+**Features**:
+- Async operations with Motor
+- MD5 hash-based cache keys
+- TTL-based expiration (180-365 days)
+- Hit count tracking
+- Cache statistics API
 - `query_daily_rainfall(params)` - Queries district daily rainfall (2019-2024)
 - `query_historical_rainfall(params)` - Queries historical rainfall (1901-2015)
 - `query_rainfall(params)` - Queries sample rainfall data (fallback)
@@ -235,18 +253,26 @@ Project samarth/
 
 **File**: `.env` (in project root)
 
-```properties
-# Development Configuration
-FASTAPI_ENV=development
-DEBUG=True
-DATABASE_URL=sqlite:///./test.db
-
-# Gemini AI Keys
-SECRET_KEY=your_gemini_api_key_here          # Answer generation
+``Gemini AI Keys (3 separate keys for optimal rate limiting)
+SECRET_KEY=your_gemini_api_key_here           # Answer generation
 API_GUESSING_MODELKEY=your_gemini_api_key_here  # Query routing
+AGENT_API_KEY=your_gemini_api_key_here        # LangGraph agent (optional)
+
+# MongoDB Atlas
+DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/
+
+# ChromaDB Cloud (optional - can use local)
+CHROMA_API_KEY=your_chroma_api_key
+CHROMA_TENANT=your_tenant
+CHROMA_DATABASE=Project Samarth
 
 # Data.gov.in API
 DATA_GOV_API_KEY=your_data_gov_api_key_here
+USE_REAL_API=true
+
+# Optional: Google Search API (for web_search tool)
+GOOGLE_SEARCH_API_KEY=your_google_api_key
+GOOGLE_SEARCH_CX=your_search_engine_idyour_data_gov_api_key_here
 USE_REAL_API=true
 ```
 
@@ -296,20 +322,26 @@ USE_REAL_API=true
 ```
 
 ### Root Endpoint
-**GET** `/`
+**Location**: `frontend/src/`
 
-Serves the beautified React frontend (`index.html`)
+**Technology Stack**:
+- React 18 with hooks
+- Vite 5 (fast build tool)
+- Tailwind CSS 3 (utility-first styling)
+- Axios (API client)
 
----
-
-## 🎨 Frontend Features
-
-**File**: `src/index.html`
+**9 Modular Components**:
+- Header, ServerStats, SampleQuestions
+- QueryForm, LoadingSpinner, ErrorMessage
+- ResultDisplay, AnswerBox, DataSources
 
 **Features**:
-- 💡 Gradient answer boxes with light bulb icon
-- 🔢 Large, highlighted numbers (24px bold blue)
-- 💚 Green percentages
+- Rich answer formatting with HTML parsing
+- Real-time cache statistics display
+- Responsive mobile-first design
+- Sample question quick-start buttons
+- Source citations with links
+- Error handling with user-friendly messages
 - 🏷️ Financial year badges (blue pills)
 - 📊 Source tags with styling
 - 💪 Bold state names
@@ -364,23 +396,42 @@ Invoke-WebRequest -Uri "http://localhost:8000/api/query" -Method POST -Body $bod
 
 ## 🔧 Running the System
 
-### 1. Activate Virtual Environment:
-```bash
-cd "C:\Users\Lenovo\Desktop\Project samarth"
-.\.venv\Scripts\Activate.ps1
-```
-
-### 2. Start Server:
+### 1. ActivaBackend:
 ```bash
 cd src
-python app.py
+python app_modular.py
 ```
 
-### 3. Access Application:
-- **Frontend**: http://localhost:8000
+### 3. Start Frontend (separate terminal):
+```bash
+cd frontend
+npm run dev
+```
+
+### 4. Access Application:
+- **Frontend**: http://localhost:5173 (Vite dev server)
+- **Backend**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
 - **Health Check**: http://localhost:8000/api/health
 
+### 5. Production URLs:
+- **Frontend**: https://project-samarth.vercel.app
+- **Backend**: https://project-samarth-gxou.onrender.comfetches
+✅ **Web search capability**: Access to real-time information
+✅ **RAG integration**: Semantic search over knowledge base
+✅ **Flexible**: Adapts to complex, multi-faceted queries
+
+### MongoDB Caching Benefits:
+✅ **30-40x faster**: 3-4s → 100ms on cache hits
+✅ **Cost savings**: Zero API calls on cached responses
+✅ **Hit tracking**: Identifies popular queries
+✅ **TTL-based**: Auto-expires old data (180-365 days)
+
+### System Architecture:
+✅ **Fault tolerance**: Automatic fallback to two-model
+✅ **Modular design**: Easy to maintain and extend
+✅ **Scalable**: Async operations, cloud databases
+✅ **Production-ready**: Deployed on Render + Vercel
 ---
 
 ## 📈 Performance Characteristics
@@ -407,31 +458,21 @@ python app.py
 
 ### Rainfall Queries:
 - "What was the rainfall in Pune in 2024?" → Daily Rainfall API
-- "Show me Punjab rainfall from 1950 to 1960" → Historical Rainfall API
-- "Compare rainfall in Punjab and Haryana for last 3 years" → Sample Rainfall
+- "S� Support
 
-### Complex Queries:
-- "Top 3 rice producing districts in Punjab" → District Crop API with aggregation
-- "Analyze production trend of wheat in Karnataka" → District Crop API with trend analysis
-- "Average annual rainfall in Maharashtra from 1980 to 2000" → Historical Rainfall API
+**Repository**: https://github.com/adityasuhane-06/Project-samarth
 
----
-
-## 🔐 Security Notes
-
-- API keys are stored in `.env` file (not committed to git)
-- CORS is configured to allow all origins (change in production)
-- No authentication required for public endpoints
-- Data.gov.in API key has rate limits (10 records per request with sample key)
+For documentation, check:
+- `docs/` folder - Complete architecture guides
+- `test/` folder - API testing examples
+- `/docs` endpoint - FastAPI auto-generated API docs
+- `README.md` - Quick start guide
 
 ---
 
-## 📝 Future Enhancements
-
-- [ ] Add more crop-to-product-code mappings
-- [ ] Implement caching for frequently asked questions
-- [ ] Add authentication for API access
-- [ ] Create admin dashboard for monitoring
+**Last Updated**: January 2, 2026  
+**Version**: 3.0 (LangGraph Agentic Architecture with RAG)  
+**Status**: ✅ Production Ready - Deployed on Render + Vercelor monitoring
 - [ ] Expand to more data sources
 - [ ] Add export functionality (CSV, PDF)
 - [ ] Implement query history tracking

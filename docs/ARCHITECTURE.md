@@ -6,97 +6,64 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                      USER INTERFACE                              │
 │          (React 18 + Vite 5 + Tailwind CSS 3)                   │
-│              Deployed on Vercel (Static Site)                    │
+│              Deployed on Vercel                                  │
 │                                                                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
 │  │   QueryForm  │  │    Server    │  │   Result     │         │
 │  │   Component  │  │    Stats     │  │   Display    │         │
-│  │              │  │  Component   │  │  Component   │         │
 │  └──────────────┘  └──────────────┘  └──────────────┘         │
 │                                                                  │
-│  ┌──────────────────────────────────────────────────────┐      │
-│  │  9 Modular React Components + Rich Formatting        │      │
-│  │  - Header, SampleQuestions, LoadingSpinner           │      │
-│  │  - AnswerBox (cards, badges, syntax highlighting)    │      │
-│  │  - DataSources, ErrorMessage                         │      │
-│  └──────────────────────────────────────────────────────┘      │
+│  9 Modular React Components + Rich Formatting                   │
 └─────────────────────────────────────────────────────────────────┘
                             │
                             │ HTTP POST /api/query
-                            │ Axios Client (CORS enabled)
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                   FASTAPI BACKEND SERVER                         │
-│                  (app_modular.py - Production)                   │
-│            Deployed on Render (https://*.onrender.com)          │
+│            Deployed on Render (project-samarth-gxou)            │
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────┐      │
-│  │    AI Agent Pipeline (Two-Model Architecture)        │      │
+│  │         Query Processing Pipeline                      │      │
 │  │                                                       │      │
-│  │  STEP 0: MongoDB Cache Check (0.1s if hit)          │      │
-│  │  STEP 1: QueryRouter Agent (Dataset Selection)       │      │
-│  │  STEP 2: Data Fetching (5 Sources)                  │      │
-│  │  STEP 3: QueryProcessor Agent (Answer Generation)    │      │
-│  │  STEP 4: Cache Response (MongoDB Atlas)             │      │
+│  │  STEP 0: MongoDB Cache Check (100ms if hit)         │      │
+│  │  STEP 1: LangGraph Agent (Primary Path)             │      │
+│  │    └─ 5 Tools: APEDA, Crop, Rainfall, RAG, Web      │      │
+│  │  STEP 2: Two-Model Fallback (if needed)             │      │
+│  │    ├─ QueryRouter (dataset selection)                │      │
+│  │    └─ QueryProcessor (answer generation)             │      │
+│  │  STEP 3: Cache Response (MongoDB)                   │      │
 │  └──────────────────────────────────────────────────────┘      │
-│                                                                  │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐           │
-│  │ QueryRouter │  │     Data     │  │   Query     │           │
-│  │    Agent    │  │    Query     │  │  Processor  │           │
-│  │  (Gemini)   │  │    Engine    │  │    Agent    │           │
-│  │             │  │              │  │  (Gemini)   │           │
-│  └─────────────┘  └──────────────┘  └─────────────┘           │
 └─────────────────────────────────────────────────────────────────┘
                             │
-            ┌───────────────┼───────────────┐
-            │               │               │
-            ▼               ▼               ▼
-┌─────────────────┐  ┌─────────────┐  ┌──────────────────┐
-│  Google Gemini  │  │  MongoDB    │  │  data.gov.in     │
-│  2.5-flash API  │  │   Atlas     │  │  Integration     │
-│                 │  │             │  │                  │
-│ Agent 1:        │  │ - Crop Data │  │ - Fetch Data     │
-│  Routing        │  │ - Rainfall  │  │ - Transform      │
-│                 │  │ - Cache TTL │  │ - Normalize      │
-│ Agent 2:        │  │ - 135x      │  │                  │
-│  Processing     │  │   Faster    │  │                  │
-└─────────────────┘  └─────────────┘  └──────────────────┘
-                                               │
-                                               │
-                    ┌──────────────────────────┴────────────────────┐
-                    │                                               │
-                    ▼                                               ▼
-    ┌──────────────────────────────┐        ┌──────────────────────────────┐
-    │   Ministry of Agriculture    │        │  India Meteorological Dept   │
-    │   Crop Production Data       │        │  Rainfall Data               │
-    │   data.gov.in                │        │  data.gov.in                 │
-    └──────────────────────────────┘        └──────────────────────────────┘
+            ┌───────────────┼───────────────┬──────────────────┐
+            │               │               │                  │
+            ▼               ▼               ▼                  ▼
+┌────────────────┐  ┌─────────────┐  ┌──────────────┐  ┌──────────────┐
+│  Google Gemini │  │  MongoDB    │  │  ChromaDB    │  │  data.gov.in │
+│  2.5 Flash API │  │   Atlas     │  │  (RAG)       │  │  APIs        │
+│                │  │             │  │              │  │              │
+│ 3 API Keys:    │  │ Caching     │  │ 100+ docs    │  │ Crop Data    │
+│ - Routing      │  │ 30-40x      │  │ HF Embed     │  │ Rainfall     │
+│ - Answer       │  │ Faster      │  │ Semantic     │  │ APEDA        │
+│ - Agent        │  │             │  │ Search       │  │              │
+└────────────────┘  └─────────────┘  └──────────────┘  └──────────────┘
 ```
 
 ## Component Details
 
 ### 1. Frontend (React + Vite + Tailwind CSS)
-**Technology**: React 18, Vite 5.0.8, Tailwind CSS 3.3.6, Axios 1.6.0
+**Technology**: React 18, Vite 5, Tailwind CSS 3, Axios
 
-**Responsibilities**:
-- User input collection with validation
-- Display of sample question buttons
-- Real-time query submission to backend
-- Rich answer formatting (cards, badges, syntax highlighting)
-- Error handling with user-friendly messages
-- Real-time server statistics display
-- Responsive design (desktop, tablet, mobile)
-
-**Key Components** (9 modular components):
-- **Header.jsx**: App title, badges, navigation
-- **ServerStats.jsx**: Live cache statistics cards
-- **SampleQuestions.jsx**: Quick-start question buttons
+**Key Components** (9 modular):
+- **Header.jsx**: App title and branding
+- **ServerStats.jsx**: Live cache statistics
+- **SampleQuestions.jsx**: Quick-start buttons
 - **QueryForm.jsx**: Input form with validation
 - **LoadingSpinner.jsx**: Animated loading state
-- **ErrorMessage.jsx**: Error display component
+- **ErrorMessage.jsx**: Error display
 - **ResultDisplay.jsx**: Result container
-- **AnswerBox.jsx**: Rich formatted answer with HTML
-- **DataSources.jsx**: Source citations with links
+- **AnswerBox.jsx**: Rich formatted answers
+- **DataSources.jsx**: Source citations
 
 **Key Features**:
 - **Component-based** architecture for reusability
@@ -142,8 +109,43 @@
 
 ### 4. Query Processing Pipeline
 
-#### Stage 1: Parameter Extraction
-**Component**: QueryProcessor.extract_query_parameters()
+**Primary Path: LangGraph Agentic Workflow**
+
+#### Stage 1: Agent Initialization
+**Component**: LangGraphAgent (services/langgraph_agent.py)
+**Process**:
+1. Query analysis using Gemini 2.5 Flash
+2. Autonomous tool selection from 5 available tools
+3. Multi-step reasoning with state management
+4. Context accumulation across steps
+
+#### Stage 2: Tool Execution (Autonomous)
+**Available Tools**:
+1. **fetch_apeda_production** - APEDA export data (2019-2024)
+2. **fetch_crop_production** - District-level crop data (2013-2015)
+3. **fetch_rainfall_data** - Historical and daily rainfall
+4. **search_knowledge_base** - RAG with 100+ documents (ChromaDB)
+5. **web_search** - Real-time web search (Google Search API)
+
+**How it works**:
+- Agent decides which tools to use based on query
+- Can call multiple tools in sequence
+- Accumulates context from each tool
+- Uses RAG for agricultural knowledge questions
+- Falls back to web search for current information
+
+#### Stage 3: Answer Synthesis
+**Component**: LangGraphAgent.process_query()
+**Process**:
+1. Combines results from all executed tools
+2. Generates natural language answer
+3. Includes citations for all sources used
+4. Tracks reasoning steps for transparency
+
+**Fallback Path: Two-Model Architecture**
+
+#### Stage 1: Parameter Extraction (If LangGraph fails)
+**Component**: QueryRouter (services/ai_models.py)
 **Input**: Natural language question
 **Output**: Structured JSON parameters
 
@@ -161,7 +163,7 @@
 ```
 
 **How it works**:
-- Uses Claude AI with structured prompting
+- Uses Gemini 2.5 Flash with structured prompting
 - Extracts entities (states, crops, years)
 - Identifies query intent (comparison, trend, top-N)
 - Determines required datasets
@@ -178,7 +180,7 @@
 - Track source for each data point
 
 #### Stage 3: Answer Generation
-**Component**: QueryProcessor.generate_answer()
+**Component**: QueryProcessor (services/ai_models.py)
 **Input**: Query results + sources
 **Output**: Natural language answer with citations
 
@@ -192,9 +194,37 @@
 
 ### Query: "Compare rice production in Punjab and Haryana for 2022-23"
 
+**Using LangGraph Agent (Primary):**
+
 1. **User Input** → Frontend sends POST to `/api/query`
 
-2. **Parameter Extraction** → Claude AI extracts:
+2. **Agent Analysis** → LangGraph agent reasons:
+   ```
+   Thought: User wants to compare rice production across states
+   Action: Will use fetch_crop_production tool with state and crop filters
+   ```
+
+3. **Tool Execution** → Agent calls fetch_crop_production:
+   - Punjab rice records for 2022-23: 4 districts
+   - Haryana rice records for 2022-23: 4 districts
+   - Agent accumulates production totals
+
+4. **Answer Synthesis** → Agent generates:
+   ```
+   Based on district-level crop production data, Punjab produced 2,277,000 tonnes 
+   of rice in 2022-23 across 4 major districts, while Haryana produced 1,468,000 
+   tonnes. Punjab's rice production is 55% higher than Haryana's.
+   
+   [Sources: fetch_crop_production, District-wise Crop Production Statistics]
+   ```
+
+5. **Response** → Returns JSON with answer, sources, reasoning steps
+
+**Using Two-Model Fallback (if LangGraph fails):**
+
+1. **User Input** → Frontend sends POST to `/api/query`
+
+2. **Parameter Extraction** → QueryRouter extracts:
    ```json
    {
      "states": ["Punjab", "Haryana"],
@@ -210,7 +240,7 @@
    - Haryana rice records for 2022-23: 4 districts
    - Aggregates total production for each state
 
-4. **Answer Generation** → Claude AI synthesizes:
+4. **Answer Generation** → QueryProcessor synthesizes:
    ```
    Punjab produced 2,277,000 tonnes of rice in 2022-23 across 4 major 
    districts, while Haryana produced 1,468,000 tonnes. [Source: District-wise 
@@ -223,31 +253,49 @@
 
 ## Key Design Decisions
 
-### 1. Two-Stage NLP Processing
-**Why**: Separating parameter extraction from answer generation improves accuracy
+### 1. LangGraph Agentic Workflow (Primary)
+**Why**: Autonomous reasoning provides better query handling
+- Agent decides which tools to use dynamically
+- Multi-step reasoning with state management
+- Can combine multiple data sources intelligently
+- RAG integration for agricultural knowledge
+- Benefits: Flexibility, adaptability, intelligence
+
+### 2. Two-Model Fallback Architecture
+**Why**: Reliability through redundancy
+- Separating routing from generation improves accuracy (when LangGraph unavailable)
 - First stage: Structured understanding (parameters)
 - Second stage: Natural language synthesis (answer)
-- Benefits: Debugging, testing, accuracy
+- Benefits: System always available, debugging easier
 
-### 2. Data Schema Normalization
+### 3. RAG with ChromaDB
+**Why**: Agricultural knowledge base integration
+- 100+ documents about crops, farming, practices
+- Semantic search with HuggingFace embeddings
+- Answers "What is..." and concept questions
+- Benefits: Contextual knowledge, educational value
+
+### 4. Data Schema Normalization
 **Why**: Different ministries use different formats
 - Internal unified schema
 - Consistent field names
 - Easy to add new sources
 
-### 3. Source Traceability
+### 5. Source Traceability
 **Why**: Critical for government/policy use
 - Every data point has source
 - Direct links to data.gov.in
 - Full transparency
 
-### 4. Caching Strategy
-**Why**: Performance and API rate limits
-- Data loaded on startup
-- Cached in memory
-- Refresh on demand
+### 6. MongoDB Caching Strategy
+**Why**: Performance and cost efficiency
+- Query responses cached in MongoDB Atlas
+- 30-40x performance improvement on cache hits
+- TTL-based expiration (180-365 days)
+- Hit tracking for analytics
+- Benefits: Speed, cost savings, user experience
 
-### 5. Stateless API
+### 7. Stateless API
 **Why**: Scalability and simplicity
 - No session management
 - Each request independent
@@ -256,30 +304,44 @@
 ## Scalability Considerations
 
 ### Current Design
-- Single-server deployment
-- In-memory caching
-- Good for: Demo, small deployments
+- Deployed on Render (backend) + Vercel (frontend)
+- MongoDB Atlas for caching
+- ChromaDB for vector storage
+- Good for: Production use, scalable to thousands of users
 
-### Production Enhancements
-1. **Database Layer**: PostgreSQL for persistent storage
-2. **Redis Cache**: Distributed caching
-3. **Load Balancing**: Multiple API servers
-4. **Background Jobs**: Periodic data refresh
-5. **API Gateway**: Rate limiting, authentication
+### Production Enhancements (Future)
+1. **Redis Layer**: Additional caching tier for hot queries
+2. **Load Balancing**: Multiple API servers
+3. **Background Jobs**: Periodic data refresh
+4. **API Gateway**: Advanced rate limiting, authentication
+5. **CDN**: Global content delivery for frontend
 
 ## Security Considerations
 
 ### Data Privacy
-- No user data stored
-- API keys used per-session only
-- Can run in air-gapped environment
+- No user data stored (queries cached, not user info)
+- API keys managed through environment variables
+- Can run in air-gapped environment with local ChromaDB
+- MongoDB Atlas with encrypted connections
 
 ### Data Integrity
-- Direct source citations
+- Direct source citations for all answers
 - Immutable data references
-- Audit trail possible
+- Audit trail through MongoDB hit tracking
+- Version control for RAG knowledge base
 
 ## Extensibility
+
+### Adding New Tools to LangGraph
+1. Create tool function in `services/langgraph_agent.py`
+2. Add tool to agent's workflow graph
+3. Update AgentState if needed
+4. Test with relevant queries
+
+### Adding New RAG Documents
+1. Add documents to `AGRICULTURAL_KNOWLEDGE` list
+2. Vector store auto-updates on startup
+3. Test semantic search queries
 
 ### Adding New Datasets
 1. Add fetch method in DataGovIntegration
@@ -301,86 +363,149 @@
 - Answer generation: ~3-5 seconds (Claude API)
 - **Total**: ~6-8 seconds per query
 
+## Performance Metrics
+
+### Query Processing Time (with LangGraph)
+- Cache check: ~50ms
+- **Cache hit**: ~100ms total (30-40x faster)
+- **Cache miss (LangGraph)**:
+  - Agent reasoning: ~1-2 seconds
+  - Tool execution: ~500-1000ms per tool
+  - Answer synthesis: ~1-2 seconds
+  - **Total**: ~3-5 seconds per query
+- **Cache miss (Two-model fallback)**:
+  - Parameter extraction: ~800ms
+  - Data querying: <100ms (in-memory)
+  - Answer generation: ~1200ms
+  - **Total**: ~2-3 seconds per query
+
 ### Optimization Opportunities
-- Parallel Claude API calls (extraction + generation)
-- Streaming responses
-- Pre-computed aggregations
-- Query result caching
+- Parallel tool execution in LangGraph
+- Streaming responses for real-time updates
+- Pre-computed aggregations for common queries
+- Hot query caching in Redis
 
 ## Technology Stack
 
 ### Backend
-- **Python 3.8+**: Core language
-- **Flask 3.0**: Web framework
+- **Python 3.11.9**: Core language
+- **FastAPI 0.104.1**: Modern async web framework
+- **Uvicorn**: ASGI server
 - **Pandas 2.1**: Data manipulation
-- **Anthropic SDK**: Claude AI integration
+- **Google Generative AI**: Gemini 2.5 Flash (3 API keys)
+- **LangChain**: LLM orchestration framework
+- **LangGraph**: Agentic workflow with state machine
+- **ChromaDB**: Vector database for RAG
+- **Motor**: Async MongoDB driver
+- **Sentence Transformers**: HuggingFace embeddings
 
 ### Frontend
-- **React 18**: UI framework
-- **Vanilla CSS**: Styling
-- **Fetch API**: HTTP requests
+- **React 18**: Modern UI framework
+- **Vite 5**: Lightning-fast build tool
+- **Tailwind CSS 3**: Utility-first CSS
+- **Axios**: HTTP client
+
+### Databases
+- **MongoDB Atlas**: Query response caching
+- **ChromaDB**: Vector storage for RAG (100+ docs)
 
 ### AI/ML
-- **Claude Sonnet 4.5**: Latest Anthropic model
-- Used for NLP, parameter extraction, answer synthesis
+- **Google Gemini 2.5 Flash**: Fast, capable model
+- **LangChain + LangGraph**: Agentic AI framework
+- **HuggingFace Embeddings**: Semantic search
+- Used for: Agent reasoning, RAG search, query routing, answer synthesis
 
-## Deployment Options
+## Deployment
 
-### Option 1: Local Development
+### Production Deployment (Current)
+**Backend**: Render.com
+- URL: https://project-samarth-gxou.onrender.com
+- Auto-deploy from GitHub main branch
+- Environment variables configured
+- Free tier (can upgrade for better performance)
+
+**Frontend**: Vercel
+- URL: https://project-samarth-frontend.vercel.app
+- Auto-deploy from GitHub
+- Global CDN
+- Instant page loads
+
+**Databases**:
+- MongoDB Atlas (free tier, 512MB)
+- ChromaDB (local on Render server)
+
+### Local Development
 ```bash
-python app.py
-open index.html
+# Backend
+cd src
+python app_modular.py
+
+# Frontend
+cd frontend
+npm install
+npm run dev
 ```
 
-### Option 2: Docker Container
+### Docker Deployment (Optional)
 ```dockerfile
-FROM python:3.9
-COPY . /app
+FROM python:3.11
 WORKDIR /app
+COPY src/requirements.txt .
 RUN pip install -r requirements.txt
-CMD ["python", "app.py"]
+COPY src/ .
+CMD ["uvicorn", "app_modular:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
-
-### Option 3: Cloud Deployment
-- AWS: Elastic Beanstalk or EC2
-- Google Cloud: App Engine or Cloud Run
-- Azure: App Service
-- Frontend: Any static hosting (S3, Netlify, Vercel)
 
 ## Future Roadmap
 
-### Phase 1 (Current): MVP
-✅ Basic Q&A functionality
-✅ Two datasets integrated
+### Phase 1 (Current): Production Ready ✅
+✅ LangGraph agentic workflow
+✅ RAG with 100+ documents
+✅ MongoDB caching (30-40x faster)
+✅ Two-model fallback architecture
+✅ Multi-dataset integration
 ✅ Source citations
-✅ Demo-ready
+✅ Deployed on Render + Vercel
 
 ### Phase 2: Enhanced Features
-- Real-time data.gov.in API integration
-- More datasets (soil, market prices, schemes)
+- More LangGraph tools (market prices, schemes)
+- Expanded RAG knowledge base (500+ docs)
 - Advanced visualizations
-- Query history
+- Query history and analytics
+- Multi-language support (Hindi)
 
-### Phase 3: Production Ready
-- Authentication system
-- Rate limiting
-- Monitoring & logging
-- Automated testing
-- API documentation
-
-### Phase 4: Advanced Analytics
-- Predictive modeling
+### Phase 3: Advanced Analytics
+- Predictive modeling with AI
 - Trend forecasting
 - Policy impact simulation
 - Custom report generation
+- Export to PDF/Excel
+
+### Phase 4: Enterprise Features
+- Advanced authentication system
+- Role-based access control
+- API rate limiting per user
+- Custom deployment options
+- White-label solutions
 
 ## Conclusion
 
 This architecture provides:
-- ✅ End-to-end functionality
-- ✅ Source traceability
-- ✅ Extensibility
-- ✅ Deployability in secure environments
-- ✅ Practical for real-world use
+- ✅ **Autonomous AI** - LangGraph agent with 5 tools
+- ✅ **Knowledge Integration** - RAG with 100+ documents
+- ✅ **High Performance** - 30-40x faster with caching
+- ✅ **Reliability** - Automatic fallback to two-model system
+- ✅ **Source Traceability** - Every answer cited
+- ✅ **Production Ready** - Deployed and accessible
+- ✅ **Scalable** - Modular architecture, easy to extend
+- ✅ **Professional** - Industry-standard design
 
-The system demonstrates how AI can make government data accessible through natural language while maintaining accuracy and transparency.
+**Last Updated**: January 2, 2026  
+**Version**: 3.0  
+**Status**: Production Deployment on Render + Vercel
+
+---
+
+*For detailed module documentation, see [MODULAR_ARCHITECTURE.md](MODULAR_ARCHITECTURE.md)*  
+*For caching details, see [MONGODB_CACHING.md](MONGODB_CACHING.md)*  
+*For system architecture, see [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md)*

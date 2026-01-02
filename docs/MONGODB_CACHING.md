@@ -1,17 +1,17 @@
 # 💾 MongoDB Caching System - Documentation
 **Project Samarth - Performance Enhancement**  
-**Date**: November 1, 2025
+**Updated**: January 2026
 
 ---
 
 ## 🎯 Overview
 
-The MongoDB caching system dramatically improves response time and reduces API costs by storing frequently asked questions and their answers.
+MongoDB caching dramatically improves response time and reduces API costs by storing frequently asked questions.
 
 ### Performance Comparison
 
-| Metric | Without Cache | With Cache (2nd+ query) | Improvement |
-|--------|--------------|------------------------|-------------|
+| Metric | Without Cache | With Cache | Improvement |
+|--------|--------------|------------|-------------|
 | **Response Time** | 3-4 seconds | 100-200 ms | **30-40x faster** ⚡ |
 | **API Calls** | 2 Gemini calls | 0 Gemini calls | **100% savings** 💰 |
 | **Data Fetching** | Full API fetch | Database lookup | **Instant** ⚡ |
@@ -27,7 +27,7 @@ User Query
 │  STEP 0: Check MongoDB Cache        │
 │  - Generate query hash (MD5)        │
 │  - Lookup in query_cache collection │
-│  - Check if not expired              │
+│  - Check expiration status           │
 └─────────────────────────────────────┘
     ↓
     ├─ ✅ CACHE HIT (Instant!)
@@ -36,68 +36,51 @@ User Query
     │
     └─ ❌ CACHE MISS
          ↓
-         STEP 1: QueryRouter (Model 1)
+         Process with LangGraph or Two-Model
          ↓
-         STEP 2: Fetch Data from APIs
-         ↓
-         STEP 3: QueryProcessor (Model 2)
-         ↓
-         STEP 4: Cache Response
+         Cache Response
          ↓
          Return answer (3-4 seconds)
 ```
 
 ---
 
-## 📊 MongoDB Collections
+## 📊 MongoDB Schema
 
-### **query_cache** Collection
+### query_cache Collection
 
 ```javascript
 {
   _id: ObjectId("..."),
-  query_hash: "abc123...",              // MD5 hash for fast lookup
+  query_hash: "abc123...",              // MD5 hash
   original_query: "What is rice production in Punjab for 2023-24?",
-  normalized_query: "rice production punjab 2023-24",  // Lowercase, sorted
+  normalized_query: "rice production punjab 2023-24",
   
   // Query parameters
   query_params: {
     states: ["Punjab"],
     crops: ["rice"],
     years: ["2023-24"],
-    data_needed: ["apeda_production"],
-    apeda_category: "Agri"
+    data_needed: ["apeda_production"]
   },
   
-  // Response data
-  answer: "Based on the APEDA Production Statistics...",
-  data_sources: [
-    {
-      dataset: "APEDA Production Statistics",
-      source: "APEDA - Ministry of Commerce",
-      url: "https://agriexchange.apeda.gov.in/"
-    }
-  ],
-  raw_results: { ... },
+  // Response
+  answer: "Based on APEDA data...",
+  data_sources: [...],
+  raw_results: {...},
   
-  // Cache metadata
-  created_at: ISODate("2025-11-01T10:30:00Z"),
-  expires_at: ISODate("2026-05-01T10:30:00Z"),    // TTL: 6 months for APEDA
-  last_accessed: ISODate("2025-11-01T14:25:00Z"),
-  hit_count: 15                                     // Tracks popularity
+  // Metadata
+  created_at: ISODate("2026-01-02T10:00:00Z"),
+  expires_at: ISODate("2026-07-02T10:00:00Z"),  // 6 months TTL
+  last_accessed: ISODate("2026-01-02T14:00:00Z"),
+  hit_count: 15
 }
 ```
 
-### **Indexes**
-```javascript
-- query_hash: UNIQUE index (fast lookup)
-- expires_at: Index for TTL queries
-- created_at: Index for recent queries
-```
-
----
-
-## ⏰ Cache Expiration Strategy
+### Indexes
+- `query_hash`: UNIQUE (fast lookup)
+- `expires_at`: Auto-cleanup
+- `created_at`: Recent queries
 
 | Data Type | TTL | Reason |
 |-----------|-----|--------|
