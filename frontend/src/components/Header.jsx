@@ -20,13 +20,13 @@ const Header = () => {
 
       <div className="mt-6 flex flex-wrap gap-2">
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary-700">
-          🤖 Two-Model AI
+          🤖 Ai Agent
         </span>
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
           ⚡ MongoDB Caching
         </span>
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-          📊 5 Data Sources
+          📊 5+ Data Sources
         </span>
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
           🚀 135x Faster
