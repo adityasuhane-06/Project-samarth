@@ -11,7 +11,7 @@ class MongoDBCache:
     """Handles MongoDB cache operations"""
     
     def __init__(self):
-        self.client: Optional[AsyncIOMotorClient] = None
+        self.client: Optional[AsyncIOMotorClient] = None # type: ignore
         self.db = None
         self.collection_name = 'query_cache'
     
@@ -28,18 +28,18 @@ class MongoDBCache:
             
             # Test connection
             await self.client.admin.command('ping')
-            print("✅ Connected to MongoDB Atlas successfully!")
+            print(" Connected to MongoDB Atlas successfully!")
             return True
         except Exception as e:
-            print(f"⚠️ MongoDB connection failed: {e}")
-            print("⚠️ Continuing without cache (will still work)")
+            print(f"MongoDB connection failed: {e}")
+            print("Continuing without cache (will still work)")
             return False
     
     async def disconnect(self):
         """Disconnect from MongoDB"""
         if self.client is not None:
             self.client.close()
-            print("✅ Disconnected from MongoDB")
+            print(" Disconnected from MongoDB")
     
     def is_connected(self) -> bool:
         """Check if MongoDB is connected"""
@@ -72,11 +72,11 @@ class MongoDBCache:
                         "$set": {"last_accessed": datetime.now()}
                     }
                 )
-                print(f"💾 CACHE HIT! Query has been answered {cached.get('hit_count', 0)} times before")
+                print(f" CACHE HIT! Query has been answered {cached.get('hit_count', 0)} times before")
                 return cached
             return None
         except Exception as e:
-            print(f"⚠️ Cache lookup error: {e}")
+            print(f" Cache lookup error: {e}")
             return None
     
     async def cache_response(self, query_hash: str, query: str, params: dict,
@@ -113,14 +113,14 @@ class MongoDBCache:
                 upsert=True
             )
             
-            print(f"💾 Response cached (TTL: {ttl_days} days, expires: {expires_at.strftime('%Y-%m-%d')})")
+            print(f" Response cached (TTL: {ttl_days} days, expires: {expires_at.strftime('%Y-%m-%d')})")
             return True
         except Exception as e:
-            print(f"⚠️ Cache storage error: {e}")
+            print(f" Cache storage error: {e}")
             return False
     
     def _get_ttl_days(self, params: dict) -> int:
-        """Determine TTL based on data type"""
+        """ TTL based on data type"""
         data_needed = params.get('data_needed', [])
         
         if 'apeda_production' in data_needed:
@@ -135,7 +135,7 @@ class MongoDBCache:
             return settings.CACHE_TTL['default']
     
     async def get_cache_stats(self) -> Dict[str, Any]:
-        """Get cache statistics"""
+        """cache statistics"""
         if self.db is None:
             raise Exception("MongoDB not connected")
         
