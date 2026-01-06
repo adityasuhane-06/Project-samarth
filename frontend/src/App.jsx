@@ -6,8 +6,10 @@ import QueryForm from './components/QueryForm'
 import ResultDisplay from './components/ResultDisplay'
 import ErrorMessage from './components/ErrorMessage'
 import LoadingSpinner from './components/LoadingSpinner'
+import NeuralBackground from './components/NeuralBackground'
 import { healthCheck, submitQuery } from './services/api'
 import { SAMPLE_QUESTIONS } from './utils/constants'
+import { useTheme } from './context/ThemeContext'
 
 function App() {
   const [question, setQuestion] = useState('')
@@ -15,6 +17,7 @@ function App() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const [serverHealth, setServerHealth] = useState(null)
+  const { isDark } = useTheme()
 
   useEffect(() => {
     checkServerHealth()
@@ -57,17 +60,21 @@ function App() {
     setResult(null)
   }
 
-  return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <Header />
-        
-        {serverHealth && <ServerStats health={serverHealth} />}
+  const hasQuery = question.trim().length > 0
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 space-y-6 fade-in">
+  return (
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 relative">
+      <NeuralBackground hasQuery={hasQuery} />
+      <div className="max-w-7xl mx-auto relative" style={{ zIndex: 10 }}>
+        <Header hasQuery={hasQuery} />
+        
+        {serverHealth && <ServerStats health={serverHealth} hasQuery={hasQuery} />}
+
+        <div className={`${isDark ? `glass-dark border-2 ${hasQuery ? 'border-yellow-600/70' : 'border-silver-500/50'}` : 'glass-light'} rounded-2xl p-8 space-y-6 fade-in transition-all duration-500`}>
           <SampleQuestions 
             questions={SAMPLE_QUESTIONS} 
-            onSelectQuestion={loadSampleQuestion} 
+            onSelectQuestion={loadSampleQuestion}
+            hasQuery={hasQuery}
           />
 
           <QueryForm

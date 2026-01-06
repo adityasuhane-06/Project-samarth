@@ -4,41 +4,81 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f0f4ff',
-          100: '#e6edff',
-          200: '#d1ddff',
-          300: '#aec2ff',
-          400: '#889dff',
-          500: '#667eea',
-          600: '#5568d3',
-          700: '#4753b8',
-          800: '#3c4595',
-          900: '#343c77',
+        // Duotone dark theme colors
+        dark: {
+          bg: '#000000',
+          surface: '#0a0a0a',
+          elevated: '#141414',
+          border: '#1f1f1f',
         },
-        secondary: {
-          50: '#faf5ff',
-          100: '#f3e8ff',
-          200: '#e9d5ff',
-          300: '#d8b4fe',
-          400: '#c084fc',
-          500: '#764ba2',
-          600: '#6941a0',
-          700: '#5b3791',
-          800: '#4c2e7a',
-          900: '#3f2565',
+        light: {
+          bg: '#f8f9fa',
+          surface: '#ffffff',
+          elevated: '#f1f3f5',
+          border: '#e0e0e0',
+        },
+        // Grey accent colors for duotone
+        grey: {
+          50: '#fafafa',
+          100: '#f5f5f5',
+          200: '#e5e5e5',
+          300: '#d4d4d4',
+          400: '#a3a3a3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717',
+        },
+        // Silver accent colors for borders
+        silver: {
+          50: '#f8f9fa',
+          100: '#f1f3f5',
+          200: '#e9ecef',
+          300: '#dee2e6',
+          400: '#ced4da',
+          500: '#adb5bd',
+          600: '#8c95a1',
+          700: '#6c757d',
+          800: '#495057',
+          900: '#343a40',
+        },
+        // Modern gradient colors
+        gradient: {
+          from: '#737373',
+          via: '#a3a3a3',
+          to: '#d4d4d4',
         }
       },
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'sans-serif'],
+        // Robotic/Tech fonts
+        display: ['Orbitron', 'sans-serif'],
+        tech: ['Rajdhani', 'sans-serif'],
+        mono: ['Space Mono', 'Courier New', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
-        'spin-slow': 'spin 2s linear infinite',
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-      }
+        'spin-slow': 'spin 3s linear infinite',
+        'gradient-shift': 'gradientShift 8s ease infinite',
+        'float': 'float 3s ease-in-out infinite',
+      },
+      keyframes: {
+        gradientShift: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+      },
+      backgroundSize: {
+        '200': '200% 200%',
+      },
     },
   },
   plugins: [],
