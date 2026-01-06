@@ -7,11 +7,13 @@ import ResultDisplay from './components/ResultDisplay'
 import ErrorMessage from './components/ErrorMessage'
 import LoadingSpinner from './components/LoadingSpinner'
 import NeuralBackground from './components/NeuralBackground'
+import LandingPage from './components/LandingPage'
 import { healthCheck, submitQuery } from './services/api'
 import { SAMPLE_QUESTIONS } from './utils/constants'
 import { useTheme } from './context/ThemeContext'
 
 function App() {
+  const [showLanding, setShowLanding] = useState(true)
   const [question, setQuestion] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
@@ -63,34 +65,41 @@ function App() {
   const hasQuery = question.trim().length > 0
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 relative">
-      <NeuralBackground hasQuery={hasQuery} />
-      <div className="max-w-7xl mx-auto relative" style={{ zIndex: 10 }}>
-        <Header hasQuery={hasQuery} />
-        
-        {serverHealth && <ServerStats health={serverHealth} hasQuery={hasQuery} />}
+    <div className="min-h-screen relative overflow-hidden">
+      <NeuralBackground hasQuery={hasQuery && !showLanding} />
+      
+      {showLanding ? (
+        <LandingPage onEnter={() => setShowLanding(false)} />
+      ) : (
+        <div className="py-8 px-4 sm:px-6 lg:px-8 relative fade-in" style={{ zIndex: 10 }}>
+          <div className="max-w-7xl mx-auto relative">
+            <Header hasQuery={hasQuery} />
+            
+            {serverHealth && <ServerStats health={serverHealth} hasQuery={hasQuery} />}
 
-        <div className={`${isDark ? `glass-dark border-2 ${hasQuery ? 'border-yellow-600/70' : 'border-silver-500/50'}` : 'glass-light'} rounded-2xl p-8 space-y-6 fade-in transition-all duration-500`}>
-          <SampleQuestions 
-            questions={SAMPLE_QUESTIONS} 
-            onSelectQuestion={loadSampleQuestion}
-            hasQuery={hasQuery}
-          />
+            <div className={`${isDark ? `glass-dark border-2 ${hasQuery ? 'border-yellow-600/70' : 'border-silver-500/50'}` : 'glass-light'} rounded-2xl p-8 space-y-6 fade-in transition-all duration-500`}>
+              <SampleQuestions 
+                questions={SAMPLE_QUESTIONS} 
+                onSelectQuestion={loadSampleQuestion}
+                hasQuery={hasQuery}
+              />
 
-          <QueryForm
-            question={question}
-            setQuestion={setQuestion}
-            onSubmit={handleSubmit}
-            loading={loading}
-          />
+              <QueryForm
+                question={question}
+                setQuestion={setQuestion}
+                onSubmit={handleSubmit}
+                loading={loading}
+              />
 
-          {loading && <LoadingSpinner />}
+              {loading && <LoadingSpinner />}
 
-          {error && <ErrorMessage message={error} />}
+              {error && <ErrorMessage message={error} />}
 
-          {result && <ResultDisplay result={result} />}
+              {result && <ResultDisplay result={result} />}
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

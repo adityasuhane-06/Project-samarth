@@ -27,7 +27,7 @@ export const formatAnswer = (answer) => {
     '<div class="flex items-center gap-3 my-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 hover:shadow-lg transition-all">' +
     '<div class="flex-1"><span class="text-gray-700 font-medium">$1, </span>' +
     '<span class="font-bold text-lg text-gray-900 bg-yellow-100 px-2 py-0.5 rounded">$2</span></div>' +
-    '<div class="text-right"><div class="text-3xl font-extrabold text-primary-600">$3</div>' +
+    '<div class="text-right"><div class="text-3xl font-extrabold text-yellow-600">$3</div>' +
     '<div class="text-xs text-gray-500 font-medium">units</div></div></div>'
   )
 
@@ -46,16 +46,16 @@ export const formatAnswer = (answer) => {
   // Format simple list items without bold (e.g., "* Amritsar, Punjab : 4,000.0 units")
   formatted = formatted.replace(
     /\*\s+([^:\n]+)\s*:\s*([0-9,]+\.?[0-9]*)\s*units/g,
-    '<div class="flex items-center justify-between my-2 pl-6"><span class="text-gray-700">$1</span><span class="font-bold text-primary-600">$2 units</span></div>'
+    '<div class="flex items-center justify-between my-2 pl-6"><span class="text-gray-700">$1</span><span class="font-bold text-yellow-600">$2 units</span></div>'
   )
 
   // Format numbered list items (e.g., "1. **Bihar**: 5,709.0 units")
   formatted = formatted.replace(
     /(\d+)\.\s+\*\*([^:*]+)\*\*:?\s*:?\*\*\s*([0-9,]+\.?[0-9]*)\s*units/g,
-    '<div class="flex items-start gap-3 my-3 p-4 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow border-l-4 border-primary-500">' +
-    '<span class="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary-500 text-white rounded-full font-bold">$1</span>' +
+    '<div class="flex items-start gap-3 my-3 p-4 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow border-l-4 border-yellow-500">' +
+    '<span class="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-yellow-500 text-black rounded-full font-bold">$1</span>' +
     '<div class="flex-1"><h4 class="text-xl font-bold text-green-700 mb-1">$2</h4>' +
-    '<p class="text-3xl font-extrabold text-primary-600">$3 <span class="text-sm font-normal text-gray-600">units</span></p></div></div>'
+    '<p class="text-3xl font-extrabold text-yellow-600">$3 <span class="text-sm font-normal text-gray-600">units</span></p></div></div>'
   )
 
   // Format percentages with highlighting
